@@ -2,21 +2,34 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Информационная Безопасность</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
-html, body { height: 100%; overflow: hidden; font-family: 'Share Tech Mono', monospace; background: #000; color: #00ffcc; touch-action: none; }
+html, body { 
+  height: 100%; 
+  overflow: hidden; 
+  font-family: 'Share Tech Mono', monospace; 
+  background: #000; 
+  color: #00ffcc; 
+  touch-action: none;
+}
 
 #game { 
-  position: relative; width: 100vw; height: 100vh; overflow: hidden;
+  position: relative; 
+  width: 100vw; 
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
   background: 
     linear-gradient(rgba(0,255,204,0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0,255,204,0.03) 1px, transparent 1px),
     radial-gradient(ellipse at center, #001a1a 0%, #000 100%);
   background-size: 30px 30px, 30px 30px, 100% 100%;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 #game::before {
@@ -31,34 +44,41 @@ html, body { height: 100%; overflow: hidden; font-family: 'Share Tech Mono', mon
 }
 
 .screen { 
-  position: absolute; inset: 0; display: none; flex-direction: column; padding: 15px;
-  z-index: 10;
+  position: absolute; inset: 0; display: none; flex-direction: column; 
+  padding: 10px; z-index: 10;
+  overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 .screen.active { display: flex; }
 
-#endScreen.active { overflow-y: auto; }
-#endScreen .center-content { 
-  justify-content: flex-start; padding-top: 20px; padding-bottom: 30px;
-  min-height: 100%;
+#menuScreen.active, #tutorialScreen.active, #adviceScreen.active, #endScreen.active {
+  display: block; padding: 10px;
+}
+#gameScreen.active { display: flex; overflow: hidden; }
+
+.center-content {
+  min-height: calc(100% - 20px);
+  display: flex; flex-direction: column; 
+  justify-content: center; align-items: center;
+  padding: 10px 5px;
 }
 
-#adviceScreen.active { overflow-y: auto; }
-#adviceScreen .advice-content {
-  flex: 1; display: flex; flex-direction: column;
+.tutorial-content, .advice-content {
+  min-height: calc(100% - 20px);
+  display: flex; flex-direction: column;
   justify-content: center; align-items: center;
-  padding: 20px; min-height: 100%;
+  padding: 10px 5px;
 }
 
 h1 { 
-  font-family: 'Orbitron', sans-serif; font-size: 32px; text-align: center; margin-bottom: 10px;
-  color: #00ffcc; text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc, 0 0 30px #00ffcc;
-  letter-spacing: 4px; font-weight: 900;
+  font-family: 'Orbitron', sans-serif; 
+  font-size: clamp(20px, 6vw, 28px); 
+  text-align: center; margin-bottom: 8px;
+  color: #00ffcc; 
+  text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+  letter-spacing: 3px; font-weight: 900;
   animation: flicker 3s infinite;
-}
-
-h2 {
-  font-family: 'Orbitron', sans-serif; font-size: 20px; text-align: center; margin-bottom: 15px;
-  color: #00ffcc; text-shadow: 0 0 8px #00ffcc; letter-spacing: 2px;
+  padding: 0 5px;
 }
 
 @keyframes flicker {
@@ -70,16 +90,14 @@ h2 {
   97% { opacity: 1; }
 }
 
-p { 
-  font-size: 15px; line-height: 1.6; text-align: center; margin-bottom: 10px;
-  color: #88ffee;
-}
+p { font-size: 14px; line-height: 1.5; text-align: center; margin-bottom: 8px; color: #88ffee; }
 
 .btn { 
   background: transparent; color: #00ffcc; border: 2px solid #00ffcc;
-  padding: 15px 30px; font-size: 16px; font-family: 'Orbitron', sans-serif; font-weight: 700;
-  border-radius: 0; cursor: pointer; margin: 10px auto; display: block;
-  min-width: 220px; letter-spacing: 3px; position: relative;
+  padding: 12px 24px; font-size: 14px; 
+  font-family: 'Orbitron', sans-serif; font-weight: 700;
+  border-radius: 0; cursor: pointer; margin: 8px auto; display: block;
+  min-width: 200px; letter-spacing: 2px; position: relative;
   box-shadow: 0 0 15px rgba(0,255,204,0.5), inset 0 0 15px rgba(0,255,204,0.1);
   text-shadow: 0 0 8px #00ffcc;
   transition: all 0.2s;
@@ -89,25 +107,22 @@ p {
   background: #00ffcc; color: #000; text-shadow: none;
   box-shadow: 0 0 30px #00ffcc;
 }
-.btn::before {
-  content: '> '; opacity: 0.7;
-}
+.btn::before { content: '> '; opacity: 0.7; }
 
 .hud { 
   display: flex; justify-content: space-between; align-items: center;
-  padding: 10px 15px; 
+  padding: 8px 12px; 
   background: rgba(0,255,204,0.05);
   border: 1px solid #00ffcc;
-  margin-bottom: 10px; font-size: 12px; font-weight: bold;
+  margin-bottom: 8px; font-size: 11px; font-weight: bold;
   font-family: 'Share Tech Mono', monospace;
   box-shadow: 0 0 10px rgba(0,255,204,0.3), inset 0 0 10px rgba(0,255,204,0.05);
   clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  flex-shrink: 0;
 }
 .hud div { color: #00ffcc; text-shadow: 0 0 5px #00ffcc; letter-spacing: 1px; }
-.hud .label { color: #00ffcc99; font-size: 10px; }
+.hud .label { color: #00ffcc99; font-size: 9px; }
 .hud #lives { font-size: 11px; letter-spacing: 0; }
-
-.center-content { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
 
 #gameArea { 
   flex: 1; position: relative;
@@ -116,12 +131,14 @@ p {
   overflow: hidden;
   box-shadow: 0 0 20px rgba(0,255,204,0.4), inset 0 0 20px rgba(0,255,204,0.1);
   clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+  min-height: 0;
 }
 
+/* === ИГРА 1: PHISHING === */
 .email { 
   position: absolute; width: 92%; left: 4%;
   background: linear-gradient(135deg, rgba(0,40,40,0.95), rgba(0,20,20,0.95));
-  padding: 12px; border: 1px solid #00ffcc;
+  padding: 10px; border: 1px solid #00ffcc;
   border-left: 4px solid #00ffcc;
   cursor: pointer;
   box-shadow: 0 0 10px rgba(0,255,204,0.3);
@@ -132,21 +149,21 @@ p {
   box-shadow: 0 0 15px rgba(255,0,85,0.4);
   background: linear-gradient(135deg, rgba(40,0,15,0.95), rgba(20,0,5,0.95));
 }
-.email .from { font-size: 12px; color: #88ffee; margin-bottom: 4px; }
+.email .from { font-size: 11px; color: #88ffee; margin-bottom: 3px; }
 .email.phish .from { color: #ff88aa; }
-.email .subj { font-size: 14px; font-weight: bold; color: #00ffcc; }
+.email .subj { font-size: 13px; font-weight: bold; color: #00ffcc; }
 .email.phish .subj { color: #ff5577; }
-.email .preview { font-size: 11px; color: #66bbaa; margin-top: 4px; }
-
+.email .preview { font-size: 10px; color: #66bbaa; margin-top: 3px; }
 .swipe-hint { 
-  position: absolute; bottom: 10px; width: 100%; text-align: center; 
-  font-size: 11px; color: #00ffcc88; z-index: 5; letter-spacing: 1px;
+  position: absolute; bottom: 8px; width: 100%; text-align: center; 
+  font-size: 10px; color: #00ffcc88; z-index: 5; letter-spacing: 1px;
 }
 
+/* === ИГРА 2: FIREWALL === */
 .packet { 
-  position: absolute; width: 50px; height: 50px;
+  position: absolute; width: 48px; height: 48px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 28px; border-radius: 50%;
+  font-size: 26px; border-radius: 50%;
 }
 .packet.virus { 
   background: radial-gradient(circle, #4a0015, #1a0008);
@@ -160,16 +177,14 @@ p {
   box-shadow: 0 0 20px #00ffcc, inset 0 0 10px #00ffcc;
   border: 2px solid #00ffcc;
 }
-
 #shield { 
-  position: absolute; bottom: 30px; width: 80px; height: 80px;
+  position: absolute; bottom: 25px; width: 72px; height: 72px;
   background: radial-gradient(circle, rgba(0,255,204,0.3), rgba(0,255,204,0.1));
-  border: 3px solid #00ffcc;
-  border-radius: 50%;
+  border: 3px solid #00ffcc; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 36px;
+  font-size: 32px;
   box-shadow: 0 0 30px #00ffcc, inset 0 0 20px rgba(0,255,204,0.3);
-  margin-left: -40px;
+  margin-left: -36px;
   animation: shieldPulse 2s infinite;
 }
 @keyframes shieldPulse {
@@ -177,10 +192,11 @@ p {
   50% { box-shadow: 0 0 50px #00ffcc, inset 0 0 30px rgba(0,255,204,0.5); }
 }
 
+/* === ИГРА 3: PASSWORD === */
 .char { 
-  position: absolute; width: 45px; height: 45px;
+  position: absolute; width: 42px; height: 42px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 22px; font-weight: bold; color: white;
+  font-size: 20px; font-weight: bold; color: white;
   font-family: 'Orbitron', sans-serif;
   clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
 }
@@ -194,32 +210,31 @@ p {
   color: #fff;
   box-shadow: 0 0 15px #ff0055;
 }
-
 #basket { 
-  position: absolute; bottom: 20px; width: 100px; height: 35px;
+  position: absolute; bottom: 15px; width: 96px; height: 32px;
   background: linear-gradient(135deg, #00ffcc, #00aa88);
-  margin-left: -50px;
+  margin-left: -48px;
   box-shadow: 0 0 20px #00ffcc;
   clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 100%, 0 100%);
 }
-
 #passDisplay { 
-  position: absolute; top: 10px; left: 10px; right: 10px;
+  position: absolute; top: 8px; left: 8px; right: 8px;
   background: rgba(0,0,0,0.8);
   border: 1px solid #00ffcc;
-  padding: 8px; font-family: 'Share Tech Mono', monospace; font-size: 13px;
-  min-height: 30px; word-break: break-all; z-index: 5;
+  padding: 6px 8px; font-family: 'Share Tech Mono', monospace; font-size: 12px;
+  min-height: 26px; word-break: break-all; z-index: 5;
   color: #00ffcc; text-shadow: 0 0 5px #00ffcc;
   box-shadow: 0 0 10px rgba(0,255,204,0.3), inset 0 0 5px rgba(0,255,204,0.1);
 }
 
-.captcha-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 15px; }
+/* === ИГРА 4: CAPTCHA === */
+.captcha-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 10px; }
 .captcha-cell { 
   aspect-ratio: 1;
   background: rgba(0,40,40,0.8);
   border: 2px solid #00ffcc66;
   display: flex; align-items: center; justify-content: center;
-  font-size: 36px; cursor: pointer;
+  font-size: 30px; cursor: pointer;
   transition: all 0.15s;
   box-shadow: inset 0 0 10px rgba(0,255,204,0.1);
 }
@@ -230,22 +245,23 @@ p {
   transform: scale(0.95);
 }
 .captcha-task { 
-  text-align: center; padding: 15px; font-size: 15px;
+  text-align: center; padding: 10px 8px; font-size: 13px;
   font-weight: bold; color: #00ffcc;
   text-shadow: 0 0 8px #00ffcc;
   letter-spacing: 1px;
   font-family: 'Orbitron', sans-serif;
 }
 
+/* === ИГРА 5: ANTIVIRUS === */
 .av-grid { 
-  position: absolute; left: 10px; right: 10px; top: 35px; bottom: 35px;
-  display: grid; gap: 6px;
+  position: absolute; left: 8px; right: 8px; top: 30px; bottom: 32px;
+  display: grid; gap: 5px;
 }
 .av-cell { 
   background: rgba(0,40,40,0.8);
   border: 2px solid #00ffcc66;
   display: flex; align-items: center; justify-content: center;
-  font-size: 28px; cursor: pointer;
+  font-size: 26px; cursor: pointer;
   transition: all 0.2s;
 }
 .av-cell.selected { 
@@ -254,17 +270,404 @@ p {
   box-shadow: 0 0 20px #00ffcc, inset 0 0 15px rgba(0,255,204,0.4);
   transform: scale(0.95);
 }
-.av-cell.matched { 
-  opacity: 0.15;
-  border-color: #00ffcc22;
+.av-cell.matched { opacity: 0.15; border-color: #00ffcc22; }
+
+/* === ИГРА 6: ENCRYPTION (Цезарь-шифр) === */
+.crypto-wrap {
+  padding: 12px 10px; display: flex; flex-direction: column; height: 100%;
+}
+.crypto-task {
+  text-align: center; font-size: 12px; color: #00ffcc88; 
+  letter-spacing: 1px; margin-bottom: 8px;
+}
+.crypto-encoded {
+  background: rgba(255,0,85,0.1);
+  border: 2px solid #ff0055;
+  padding: 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 22px;
+  letter-spacing: 4px;
+  text-align: center;
+  color: #ff5577;
+  text-shadow: 0 0 10px #ff0055;
+  margin-bottom: 10px;
+  box-shadow: 0 0 15px rgba(255,0,85,0.3), inset 0 0 10px rgba(255,0,85,0.1);
+  word-break: break-all;
+}
+.crypto-shift {
+  text-align: center; font-size: 13px; color: #ffcc00;
+  margin-bottom: 8px; letter-spacing: 2px;
+  text-shadow: 0 0 8px #ffcc00;
+}
+.crypto-answer {
+  background: rgba(0,255,204,0.08);
+  border: 2px solid #00ffcc;
+  padding: 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 22px;
+  letter-spacing: 4px;
+  text-align: center;
+  color: #00ffcc;
+  text-shadow: 0 0 10px #00ffcc;
+  margin-bottom: 10px;
+  min-height: 50px;
+  box-shadow: 0 0 15px rgba(0,255,204,0.3), inset 0 0 10px rgba(0,255,204,0.1);
+  word-break: break-all;
+}
+.crypto-keyboard {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.crypto-key {
+  background: rgba(0,40,40,0.8);
+  border: 1px solid #00ffcc66;
+  padding: 8px 2px;
+  text-align: center;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  color: #00ffcc;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-shadow: 0 0 5px #00ffcc;
+}
+.crypto-key:active {
+  background: rgba(0,255,204,0.3);
+  box-shadow: 0 0 15px #00ffcc;
+  transform: scale(0.9);
+}
+.crypto-key.del {
+  background: rgba(255,0,85,0.15);
+  border-color: #ff005566;
+  color: #ff5577;
+  text-shadow: 0 0 5px #ff0055;
+  grid-column: span 2;
+}
+.crypto-key.submit {
+  background: rgba(0,255,204,0.2);
+  grid-column: span 3;
+  color: #00ffcc;
+}
+.crypto-timer {
+  text-align: center;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  color: #00ffcc;
+  letter-spacing: 2px;
+  text-shadow: 0 0 8px #00ffcc;
+  padding: 4px;
 }
 
+/* === ИГРА 7: PERMISSIONS === */
+.perm-wrap {
+  padding: 10px; display: flex; flex-direction: column; height: 100%;
+}
+.perm-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  background: rgba(0,255,204,0.08);
+  border: 1px solid #00ffcc;
+  margin-bottom: 10px;
+}
+.perm-app-icon {
+  font-size: 36px;
+  filter: drop-shadow(0 0 10px #00ffcc);
+}
+.perm-app-info { flex: 1; }
+.perm-app-name {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 15px; color: #00ffcc;
+  text-shadow: 0 0 6px #00ffcc;
+  letter-spacing: 1px;
+}
+.perm-app-type {
+  font-size: 10px; color: #00ffcc88;
+  margin-top: 2px; letter-spacing: 1px;
+}
+.perm-counter {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px; color: #ffcc00;
+  text-align: center; margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+.perm-list { flex: 1; overflow-y: auto; }
+.perm-list::-webkit-scrollbar { display: none; }
+.perm-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; margin-bottom: 6px;
+  background: rgba(0,30,30,0.6);
+  border: 1px solid #00ffcc44;
+  transition: all 0.2s;
+}
+.perm-item-icon { font-size: 22px; width: 30px; text-align: center; }
+.perm-item-text {
+  flex: 1; font-size: 12px; color: #aaffee;
+  line-height: 1.3;
+}
+.perm-toggle {
+  display: flex; gap: 4px;
+}
+.perm-btn {
+  padding: 6px 10px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  border: 1px solid;
+  background: transparent;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.15s;
+}
+.perm-btn.allow {
+  color: #00ffcc; border-color: #00ffcc;
+}
+.perm-btn.allow.active {
+  background: #00ffcc; color: #000;
+  box-shadow: 0 0 12px #00ffcc;
+}
+.perm-btn.deny {
+  color: #ff0055; border-color: #ff0055;
+}
+.perm-btn.deny.active {
+  background: #ff0055; color: #fff;
+  box-shadow: 0 0 12px #ff0055;
+}
+.perm-submit {
+  margin: 10px auto 0; min-width: 180px; padding: 10px 20px; font-size: 13px;
+}
+
+/* === ИГРА 8: SOCIAL ENGINEER === */
+.social-wrap {
+  padding: 10px; display: flex; flex-direction: column; height: 100%;
+}
+.social-phone {
+  background: linear-gradient(135deg, rgba(255,0,85,0.1), rgba(40,0,15,0.6));
+  border: 2px solid #ff0055;
+  padding: 10px 12px;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 0 15px rgba(255,0,85,0.3);
+  margin-bottom: 10px;
+  animation: callRing 1.5s infinite;
+}
+@keyframes callRing {
+  0%, 100% { box-shadow: 0 0 15px rgba(255,0,85,0.3); }
+  50% { box-shadow: 0 0 30px rgba(255,0,85,0.7); }
+}
+.social-caller-icon {
+  font-size: 32px;
+  filter: drop-shadow(0 0 8px #ff0055);
+}
+.social-caller-info { flex: 1; }
+.social-caller-name {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px; color: #ff5577;
+  text-shadow: 0 0 6px #ff0055;
+  letter-spacing: 1px;
+}
+.social-caller-num {
+  font-size: 10px; color: #ff88aa;
+  font-family: 'Share Tech Mono', monospace;
+  margin-top: 2px;
+}
+.social-progress {
+  text-align: center; font-size: 10px; color: #00ffcc88;
+  margin-bottom: 8px; letter-spacing: 2px;
+}
+.social-dialog {
+  background: rgba(255,0,85,0.08);
+  border-left: 3px solid #ff0055;
+  padding: 12px;
+  font-size: 13px;
+  color: #ffaabb;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  font-style: italic;
+}
+.social-dialog::before {
+  content: '🗣️ '; font-size: 16px;
+}
+.social-options { display: flex; flex-direction: column; gap: 8px; }
+.social-option {
+  background: rgba(0,40,40,0.7);
+  border: 1px solid #00ffcc66;
+  padding: 12px;
+  text-align: left;
+  font-size: 12px;
+  color: #aaffee;
+  cursor: pointer;
+  font-family: 'Share Tech Mono', monospace;
+  line-height: 1.4;
+  transition: all 0.15s;
+  position: relative;
+  padding-left: 30px;
+}
+.social-option::before {
+  content: '>';
+  position: absolute;
+  left: 12px;
+  color: #00ffcc;
+  font-weight: bold;
+}
+.social-option:active {
+  background: rgba(0,255,204,0.15);
+  border-color: #00ffcc;
+  box-shadow: 0 0 15px rgba(0,255,204,0.4);
+}
+.social-option.correct {
+  background: rgba(0,255,100,0.2);
+  border-color: #00ff66;
+  color: #aaffaa;
+}
+.social-option.wrong {
+  background: rgba(255,0,85,0.2);
+  border-color: #ff0055;
+  color: #ffaabb;
+}
+
+/* === ИГРА 9: PATCH (закрой дыры) === */
+.patch-wrap {
+  position: relative; height: 100%; padding: 8px;
+}
+.patch-info {
+  text-align: center;
+  font-size: 11px; color: #00ffcc88;
+  letter-spacing: 1px; margin-bottom: 6px;
+}
+.patch-stats {
+  display: flex; justify-content: space-around;
+  padding: 6px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid #00ffcc44;
+  font-size: 11px;
+  margin-bottom: 8px;
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 1px;
+}
+.patch-stats span { color: #00ffcc; text-shadow: 0 0 5px #00ffcc; }
+.patch-stats .label { color: #00ffcc88; font-size: 9px; margin-right: 4px; }
+.patch-grid {
+  position: relative;
+  width: 100%;
+  height: calc(100% - 60px);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 6px;
+}
+.patch-hole {
+  background: rgba(0,30,30,0.5);
+  border: 1px dashed #00ffcc33;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  cursor: pointer;
+  font-size: 32px;
+  transition: all 0.15s;
+}
+.patch-hole.active.bug {
+  background: radial-gradient(circle, rgba(255,0,85,0.4), rgba(40,0,15,0.6));
+  border: 2px solid #ff0055;
+  box-shadow: 0 0 20px #ff0055, inset 0 0 15px rgba(255,0,85,0.3);
+  animation: bugWiggle 0.5s infinite;
+}
+.patch-hole.active.good {
+  background: radial-gradient(circle, rgba(0,255,204,0.3), rgba(0,40,40,0.6));
+  border: 2px solid #00ffcc;
+  box-shadow: 0 0 20px #00ffcc;
+}
+@keyframes bugWiggle {
+  0%, 100% { transform: rotate(-3deg) scale(1); }
+  50% { transform: rotate(3deg) scale(1.05); }
+}
+.patch-hole.patched {
+  background: rgba(0,255,100,0.2);
+  border: 2px solid #00ff66;
+  box-shadow: 0 0 15px #00ff66;
+}
+.patch-hole.missed {
+  background: rgba(255,0,85,0.3);
+  border: 2px solid #ff0055;
+  animation: missFlash 0.5s;
+}
+@keyframes missFlash {
+  0% { background: rgba(255,0,85,0.6); }
+  100% { background: rgba(255,0,85,0.1); }
+}
+
+/* === ИГРА 10: DATA LEAK === */
+.leak-wrap {
+  padding: 8px; display: flex; flex-direction: column; height: 100%;
+}
+.leak-info {
+  text-align: center;
+  font-size: 10px; color: #00ffcc88;
+  letter-spacing: 1px; margin-bottom: 6px;
+}
+.leak-pipes {
+  display: flex; gap: 6px; margin-bottom: 8px;
+}
+.leak-pipe {
+  flex: 1;
+  background: rgba(0,40,40,0.5);
+  border: 2px solid #00ffcc44;
+  padding: 8px 6px;
+  text-align: center;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  color: #00ffcc;
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px #00ffcc;
+  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 100%, 0 100%);
+}
+.leak-pipe.safe { border-color: #00ff66; color: #00ff66; }
+.leak-pipe.danger { border-color: #ff0055; color: #ff5577; }
+.leak-area {
+  flex: 1; position: relative;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid #00ffcc44;
+  overflow: hidden;
+}
+.leak-item {
+  position: absolute;
+  width: 70px;
+  padding: 8px 4px;
+  font-size: 10px;
+  text-align: center;
+  font-family: 'Share Tech Mono', monospace;
+  cursor: pointer;
+  background: rgba(0,40,40,0.9);
+  border: 2px solid;
+  font-weight: bold;
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+}
+.leak-item.private {
+  border-color: #ff0055;
+  color: #ff5577;
+  box-shadow: 0 0 12px rgba(255,0,85,0.5);
+}
+.leak-item.public {
+  border-color: #00ff66;
+  color: #00ff66;
+  box-shadow: 0 0 12px rgba(0,255,100,0.5);
+}
+.leak-stats {
+  display: flex; justify-content: space-around;
+  padding: 5px;
+  background: rgba(0,0,0,0.4);
+  font-size: 10px;
+  margin-top: 6px;
+  font-family: 'Orbitron', sans-serif;
+}
+.leak-stats span { color: #00ffcc; text-shadow: 0 0 5px #00ffcc; }
+
+/* === Общие === */
 #message { 
   position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
   background: rgba(0,0,0,0.95);
   border: 2px solid #00ffcc;
-  padding: 20px 30px;
-  font-size: 18px; font-weight: bold; z-index: 200;
+  padding: 16px 24px;
+  font-size: 16px; font-weight: bold; z-index: 200;
   display: none; text-align: center;
   font-family: 'Orbitron', sans-serif;
   color: #00ffcc; text-shadow: 0 0 10px #00ffcc;
@@ -273,9 +676,9 @@ p {
   clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
 }
 
-.progress { display: flex; gap: 3px; margin-bottom: 10px; }
+.progress { display: flex; gap: 3px; margin-bottom: 6px; flex-shrink: 0; }
 .progress div { 
-  flex: 1; height: 5px;
+  flex: 1; height: 4px;
   background: rgba(0,255,204,0.15);
   border: 1px solid rgba(0,255,204,0.3);
 }
@@ -288,7 +691,6 @@ p {
 }
 
 .lives { color: #ff0055 !important; text-shadow: 0 0 8px #ff0055 !important; }
-
 .timer-low { animation: pulseDanger 0.5s infinite; color: #ff0055 !important; text-shadow: 0 0 10px #ff0055 !important; }
 @keyframes pulseDanger {
   0%, 100% { opacity: 1; }
@@ -298,60 +700,56 @@ p {
 .tip { 
   background: rgba(0,255,204,0.08);
   border-left: 3px solid #00ffcc;
-  padding: 12px; margin: 10px 0;
-  font-size: 13px; text-align: left;
-  color: #88ffee;
-  line-height: 1.8;
+  padding: 10px 12px; margin: 8px 0;
+  font-size: 12px; text-align: left;
+  color: #88ffee; line-height: 1.6;
   font-family: 'Share Tech Mono', monospace;
   box-shadow: inset 0 0 10px rgba(0,255,204,0.05);
-}
-
-.tutorial-content {
-  flex: 1; display: flex; flex-direction: column;
-  justify-content: center; align-items: center;
-  padding: 20px;
+  max-width: 95%;
 }
 
 .tutorial-icon {
-  font-size: 80px; margin-bottom: 20px;
+  font-size: 56px; margin-bottom: 10px;
   filter: drop-shadow(0 0 20px #00ffcc);
   animation: float 2s ease-in-out infinite;
 }
 @keyframes float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-8px); }
 }
 
 .tutorial-title {
   font-family: 'Orbitron', sans-serif;
-  font-size: 24px; font-weight: 900;
+  font-size: 20px; font-weight: 900;
   color: #00ffcc; text-shadow: 0 0 15px #00ffcc;
-  letter-spacing: 3px; margin-bottom: 8px; text-align: center;
+  letter-spacing: 3px; margin-bottom: 5px; text-align: center;
 }
 
 .tutorial-subtitle {
-  font-size: 13px; color: #00ffcc88;
-  letter-spacing: 4px; margin-bottom: 20px;
+  font-size: 11px; color: #00ffcc88;
+  letter-spacing: 3px; margin-bottom: 12px;
 }
 
 .tutorial-desc {
   background: rgba(0,255,204,0.08);
   border: 1px solid #00ffcc;
-  padding: 20px;
-  font-size: 14px; line-height: 1.8;
+  padding: 12px 14px;
+  font-size: 13px; line-height: 1.6;
   color: #aaffee;
-  max-width: 90%; text-align: left;
+  max-width: 95%; width: 95%;
+  text-align: left;
   box-shadow: inset 0 0 15px rgba(0,255,204,0.05);
-  margin-bottom: 25px;
+  margin-bottom: 12px;
 }
 .tutorial-desc strong { color: #00ffcc; text-shadow: 0 0 5px #00ffcc; }
 
 .tutorial-countdown {
   font-family: 'Orbitron', sans-serif;
-  font-size: 60px; font-weight: 900;
+  font-size: 42px; font-weight: 900;
   color: #00ffcc; text-shadow: 0 0 30px #00ffcc;
-  margin-top: 10px;
+  margin-top: 5px;
   animation: countPulse 1s infinite;
+  line-height: 1;
 }
 @keyframes countPulse {
   0%, 100% { transform: scale(1); }
@@ -359,11 +757,11 @@ p {
 }
 
 .tutorial-bar {
-  width: 80%; height: 6px;
+  width: 75%; max-width: 280px;
+  height: 5px;
   background: rgba(0,255,204,0.15);
   border: 1px solid #00ffcc;
-  margin-top: 15px;
-  overflow: hidden;
+  margin-top: 10px; overflow: hidden;
 }
 .tutorial-bar-fill {
   height: 100%; background: #00ffcc;
@@ -372,7 +770,7 @@ p {
 }
 
 #skipTutBtn, #skipAdviceBtn {
-  margin-top: 20px; min-width: 180px; padding: 10px 20px; font-size: 13px;
+  margin-top: 14px; min-width: 160px; padding: 8px 18px; font-size: 12px;
 }
 
 .title-glitch { position: relative; }
@@ -397,21 +795,21 @@ p {
 
 .level-badge {
   display: inline-block;
-  padding: 4px 12px;
+  padding: 3px 10px;
   background: rgba(0,255,204,0.15);
   border: 1px solid #00ffcc;
   color: #00ffcc;
   font-family: 'Orbitron', sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 2px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .terminal-text {
   font-family: 'Share Tech Mono', monospace;
   color: #00ffcc88;
-  font-size: 12px;
-  margin-top: 10px;
+  font-size: 11px;
+  margin-top: 6px;
   letter-spacing: 2px;
 }
 .terminal-text::before { content: '> '; }
@@ -419,69 +817,65 @@ p {
 /* === ADVICE SCREEN === */
 .advice-badge {
   display: inline-block;
-  padding: 5px 14px;
+  padding: 4px 12px;
   background: rgba(255,204,0,0.12);
   border: 1px solid #ffcc00;
   color: #ffcc00;
   font-family: 'Orbitron', sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 3px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   text-shadow: 0 0 8px #ffcc00;
   box-shadow: 0 0 12px rgba(255,204,0,0.3);
 }
 
 .advice-icon {
-  font-size: 70px; margin-bottom: 15px;
+  font-size: 50px; margin-bottom: 8px;
   filter: drop-shadow(0 0 20px #ffcc00);
   animation: float 2s ease-in-out infinite;
 }
 
 .advice-title {
   font-family: 'Orbitron', sans-serif;
-  font-size: 22px; font-weight: 900;
+  font-size: 17px; font-weight: 900;
   color: #ffcc00;
   text-shadow: 0 0 15px #ffcc00, 0 0 25px #ffcc00;
   letter-spacing: 2px;
-  margin-bottom: 8px;
-  text-align: center;
-  padding: 0 10px;
+  margin-bottom: 5px; text-align: center;
+  padding: 0 5px; line-height: 1.2;
 }
 
 .advice-subtitle {
-  font-size: 12px; color: #ffcc0099;
-  letter-spacing: 4px; margin-bottom: 20px;
+  font-size: 10px; color: #ffcc0099;
+  letter-spacing: 3px; margin-bottom: 12px;
 }
 
 .advice-card {
   background: linear-gradient(135deg, rgba(255,204,0,0.08), rgba(0,255,204,0.05));
   border: 2px solid #ffcc00;
   border-left-width: 5px;
-  padding: 20px;
-  font-size: 14px; line-height: 1.7;
+  padding: 12px 14px;
+  font-size: 13px; line-height: 1.5;
   color: #fff5cc;
   max-width: 95%; width: 95%;
   box-shadow: 0 0 20px rgba(255,204,0,0.25), inset 0 0 15px rgba(255,204,0,0.05);
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   text-align: left;
   clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
 }
 
 .advice-card .advice-text {
-  font-size: 15px;
-  color: #ffffff;
-  margin-bottom: 12px;
-  line-height: 1.6;
+  font-size: 13px; color: #ffffff;
+  margin-bottom: 10px; line-height: 1.5;
 }
 
 .advice-card .advice-how {
   background: rgba(0,0,0,0.4);
   border-left: 3px solid #00ffcc;
-  padding: 10px 12px;
-  font-size: 13px;
+  padding: 8px 10px;
+  font-size: 12px;
   color: #aaffee;
-  margin-top: 10px;
-  line-height: 1.6;
+  margin-top: 8px; line-height: 1.5;
 }
 
 .advice-card .advice-how strong {
@@ -489,24 +883,24 @@ p {
   text-shadow: 0 0 6px #00ffcc;
   letter-spacing: 1px;
   font-family: 'Orbitron', sans-serif;
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .advice-countdown {
   font-family: 'Orbitron', sans-serif;
-  font-size: 50px; font-weight: 900;
-  color: #ffcc00;
-  text-shadow: 0 0 25px #ffcc00;
-  margin-top: 5px;
+  font-size: 38px; font-weight: 900;
+  color: #ffcc00; text-shadow: 0 0 25px #ffcc00;
+  margin-top: 4px;
   animation: countPulse 1s infinite;
+  line-height: 1;
 }
 
 .advice-bar {
-  width: 80%; height: 6px;
+  width: 75%; max-width: 280px;
+  height: 5px;
   background: rgba(255,204,0,0.15);
   border: 1px solid #ffcc00;
-  margin-top: 12px;
-  overflow: hidden;
+  margin-top: 8px; overflow: hidden;
 }
 .advice-bar-fill {
   height: 100%; background: #ffcc00;
@@ -521,21 +915,18 @@ p {
   box-shadow: 0 0 15px rgba(255,204,0,0.4), inset 0 0 10px rgba(255,204,0,0.1);
 }
 #skipAdviceBtn:active {
-  background: #ffcc00;
-  color: #000;
-  text-shadow: none;
+  background: #ffcc00; color: #000; text-shadow: none;
 }
 
-/* === PRIZE / QR CODE === */
+/* === PRIZE === */
 #prizeBox {
   display: none;
-  margin: 20px auto 10px;
-  padding: 20px;
+  margin: 14px auto 8px;
+  padding: 14px;
   background: rgba(0,255,204,0.08);
   border: 2px solid #00ffcc;
   box-shadow: 0 0 25px rgba(0,255,204,0.4), inset 0 0 15px rgba(0,255,204,0.1);
-  max-width: 320px;
-  width: 90%;
+  max-width: 300px; width: 92%;
   text-align: center;
   clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
   animation: prizeGlow 2s ease-in-out infinite;
@@ -547,63 +938,77 @@ p {
 
 .prize-title {
   font-family: 'Orbitron', sans-serif;
-  font-size: 16px; font-weight: 900;
+  font-size: 15px; font-weight: 900;
   color: #00ffcc; text-shadow: 0 0 10px #00ffcc;
-  letter-spacing: 3px; margin-bottom: 5px;
+  letter-spacing: 2px; margin-bottom: 3px;
 }
 
 .prize-subtitle {
-  font-size: 11px; color: #00ffcc99;
-  letter-spacing: 2px; margin-bottom: 15px;
+  font-size: 10px; color: #00ffcc99;
+  letter-spacing: 2px; margin-bottom: 10px;
 }
 
 .qr-wrapper {
   display: inline-block;
-  padding: 12px;
+  padding: 10px;
   background: #fff;
   border: 2px solid #00ffcc;
   box-shadow: 0 0 20px rgba(0,255,204,0.5);
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
-.qr-wrapper img {
-  display: block;
-  width: 200px; height: 200px;
-}
+.qr-wrapper img { display: block; width: 160px; height: 160px; }
 
 .prize-link {
   display: block;
   font-family: 'Share Tech Mono', monospace;
-  font-size: 12px;
+  font-size: 11px;
   color: #00ffcc;
   text-decoration: none;
   word-break: break-all;
-  padding: 10px;
+  padding: 8px;
   background: rgba(0,0,0,0.5);
   border: 1px solid #00ffcc66;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   text-shadow: 0 0 5px #00ffcc;
   letter-spacing: 1px;
 }
 .prize-link:active { background: rgba(0,255,204,0.2); }
 
 .prize-hint {
-  font-size: 11px;
-  color: #00ffcc88;
-  letter-spacing: 1px;
-  margin-bottom: 10px;
+  font-size: 10px; color: #00ffcc88;
+  letter-spacing: 1px; margin-bottom: 8px;
 }
 
 #copyBtn {
-  min-width: 180px;
-  padding: 10px 20px;
-  font-size: 12px;
-  margin: 5px auto;
+  min-width: 170px;
+  padding: 8px 16px;
+  font-size: 11px;
+  margin: 4px auto;
 }
 
 #copyBtn.copied {
-  background: #00ffcc;
-  color: #000;
-  text-shadow: none;
+  background: #00ffcc; color: #000; text-shadow: none;
+}
+
+.screen::-webkit-scrollbar { width: 0; display: none; }
+.screen { scrollbar-width: none; -ms-overflow-style: none; }
+
+@media (max-height: 640px) {
+  h1 { font-size: 22px; margin-bottom: 6px; }
+  .tutorial-icon { font-size: 44px; margin-bottom: 6px; }
+  .tutorial-title { font-size: 17px; }
+  .tutorial-countdown { font-size: 34px; }
+  .advice-icon { font-size: 40px; margin-bottom: 5px; }
+  .advice-title { font-size: 15px; }
+  .advice-countdown { font-size: 30px; }
+  .advice-card { padding: 10px; font-size: 12px; }
+  .advice-card .advice-text { font-size: 12px; }
+  .advice-card .advice-how { font-size: 11px; padding: 6px 8px; }
+  .btn { padding: 10px 20px; font-size: 13px; }
+  .qr-wrapper img { width: 130px; height: 130px; }
+  .tip { font-size: 11px; padding: 8px 10px; }
+  .crypto-encoded, .crypto-answer { font-size: 18px; padding: 10px; }
+  .crypto-key { font-size: 11px; padding: 6px 2px; }
 }
 </style>
 </head>
@@ -612,19 +1017,18 @@ p {
 
 <div class="screen active" id="menuScreen">
   <div class="center-content">
-    <h1 class="title-glitch" data-text="Информационная Безопасность"></h1>
-    <div class="terminal-text">SYSTEM v2.3 // INITIALIZING...</div>
-    <p style="margin-top:25px;">10 уровней кибербезопасности</p>
+    <h1 class="title-glitch" data-text="CYBERGUARD">Инфо Безопасность</h1>
+    <div class="terminal-text">SYSTEM v3.0 // 10 UNIQUE LEVELS</div>
+    <p style="margin-top:15px;">10 разных мини-игр о кибербезопасности</p>
     <div class="tip">
-      <strong>&gt; БРИФИНГ:</strong><br>
-      📧 Распознавай фишинговые письма<br>
-      🔥 Блокируй вирусы файрволом<br>
-      🔑 Создавай надёжные пароли<br>
-      ✅ Решай защитные капчи<br>
-      🦠 Удаляй угрозы с системы
+      <strong>&gt; ТВОИ ВЫЗОВЫ:</strong><br>
+      📧 Фишинг · 🔥 Файрвол · 🔑 Пароли<br>
+      ✅ Капча · 🦠 Антивирус · 🔐 Шифр<br>
+      🛡 Разрешения · 📞 Соц.инженерия<br>
+      🔧 Патчи · 💧 Утечка данных
     </div>
-    <p style="font-size:12px;color:#00ffcc88;">5 жизней на все 10 уровней</p>
-    <p style="font-size:12px;color:#ffcc00;text-shadow:0 0 8px #ffcc00;">🛡 СОВЕТЫ + 🎁 ПРИЗ ЗА ПОБЕДУ!</p>
+    <p style="font-size:11px;color:#00ffcc88;">5 жизней на все 10 уровней</p>
+    <p style="font-size:11px;color:#ffcc00;text-shadow:0 0 8px #ffcc00;margin-bottom:10px;">🛡 СОВЕТЫ + 🎁 ПРИЗ ЗА ПОБЕДУ!</p>
     <button class="btn" id="startBtn">ВОЙТИ В СИСТЕМУ</button>
   </div>
 </div>
@@ -669,8 +1073,8 @@ p {
   <div class="center-content">
     <h1 id="endTitle" class="title-glitch" data-text="VICTORY">VICTORY</h1>
     <div class="terminal-text" id="endStatus">SYSTEM SECURED</div>
-    <p id="endText" style="margin-top:20px;">Ты прошёл все испытания!</p>
-    <div style="font-family:'Orbitron',sans-serif;font-size:42px;color:#00ffcc;margin:15px 0;text-shadow:0 0 20px #00ffcc;" id="endScore">0</div>
+    <p id="endText" style="margin-top:10px;">Ты прошёл все испытания!</p>
+    <div style="font-family:'Orbitron',sans-serif;font-size:34px;color:#00ffcc;margin:8px 0;text-shadow:0 0 20px #00ffcc;" id="endScore">0</div>
     <div class="terminal-text">// FINAL SCORE</div>
 
     <div id="prizeBox">
@@ -684,7 +1088,7 @@ p {
       <button class="btn" id="copyBtn">КОПИРОВАТЬ ССЫЛКУ</button>
     </div>
 
-    <button class="btn" id="restartBtn" style="margin-top:20px;">ПЕРЕЗАПУСК</button>
+    <button class="btn" id="restartBtn" style="margin-top:14px;margin-bottom:20px;">ПЕРЕЗАПУСК</button>
   </div>
 </div>
 
@@ -693,7 +1097,7 @@ p {
 
 <script>
 // ============================================
-// 🎁 НАСТРОЙКА ПРИЗА — ЗАМЕНИ ССЫЛКУ НА СВОЮ!
+// 🎁 НАСТРОЙКА ПРИЗА
 // ============================================
 const PRIZE_URL = 'https://t.me/addstickers/mojimeow';
 // ============================================
@@ -706,25 +1110,25 @@ let area;
 const state = { current: 0, score: 0, lives: MAX_LIVES, gameActive: false };
 let activeTimers = [];
 
+// 10 РАЗНЫХ УРОВНЕЙ
 const levels = [
-  { game: 'phishing', difficulty: 1 },
-  { game: 'firewall', difficulty: 1 },
-  { game: 'password', difficulty: 1 },
-  { game: 'captcha', difficulty: 1 },
-  { game: 'antivirus', difficulty: 1 },
-  { game: 'phishing', difficulty: 2 },
-  { game: 'firewall', difficulty: 2 },
-  { game: 'password', difficulty: 2 },
-  { game: 'captcha', difficulty: 2 },
-  { game: 'antivirus', difficulty: 2 },
+  { game: 'phishing' },
+  { game: 'firewall' },
+  { game: 'password' },
+  { game: 'captcha' },
+  { game: 'antivirus' },
+  { game: 'encryption' },
+  { game: 'permissions' },
+  { game: 'social' },
+  { game: 'patch' },
+  { game: 'dataleak' },
 ];
 
-// 🛡 10 РЕАЛЬНЫХ СОВЕТОВ ПО БЕЗОПАСНОСТИ
 const adviceList = [
   {
     icon: '🔐',
     title: 'ДВУХФАКТОРНАЯ АУТЕНТИФИКАЦИЯ',
-    text: 'Включи <strong>2FA</strong> на всех важных аккаунтах (почта, банк, соцсети). Даже если злоумышленник узнает твой пароль, без второго фактора он не войдёт.',
+    text: 'Включи <strong>2FA</strong> на всех важных аккаунтах. Даже если злоумышленник узнает твой пароль, без второго фактора он не войдёт.',
     how: 'КАК: используй приложения вроде Google Authenticator, Authy или Aegis. SMS-коды менее надёжны — их могут перехватить через подмену SIM-карты.'
   },
   {
@@ -742,43 +1146,43 @@ const adviceList = [
   {
     icon: '📶',
     title: 'ОПАСНЫЙ ПУБЛИЧНЫЙ Wi-Fi',
-    text: 'В кафе, аэропорту или метро <strong>не вводи пароли и не заходи в банк</strong> через открытый Wi-Fi. Злоумышленник может перехватить твой трафик.',
+    text: 'В кафе или метро <strong>не вводи пароли и не заходи в банк</strong> через открытый Wi-Fi. Злоумышленник может перехватить твой трафик.',
     how: 'КАК: используй VPN (например, Proton VPN) или мобильный интернет. Проверяй наличие 🔒 HTTPS в адресной строке — это базовая защита.'
   },
   {
     icon: '🔍',
     title: 'ПРОВЕРЯЙ ССЫЛКИ ПЕРЕД КЛИКОМ',
-    text: 'Перед нажатием на ссылку <strong>наведи на неё курсор</strong> (или удерживай палец на телефоне) — внизу покажется реальный адрес. Часто он отличается от того, что написано.',
+    text: 'Перед нажатием на ссылку <strong>наведи на неё курсор</strong> (или удерживай палец на телефоне) — внизу покажется реальный адрес.',
     how: 'КАК: ищи опечатки в домене (sber8ank.ru вместо sberbank.ru), лишние поддомены и странные зоны (.xyz, .tk). При сомнении — открой сайт вручную.'
   },
   {
     icon: '💾',
     title: 'ДЕЛАЙ РЕЗЕРВНЫЕ КОПИИ',
     text: 'Шифровальщики (ransomware) могут заблокировать все твои файлы. Единственная гарантированная защита — <strong>регулярные бэкапы</strong>.',
-    how: 'КАК: следуй правилу 3-2-1: 3 копии данных, на 2 разных носителях, 1 копия — вне дома (облако или отдельный диск, который не подключён постоянно).'
+    how: 'КАК: следуй правилу 3-2-1: 3 копии данных, на 2 разных носителях, 1 копия — вне дома (облако или отдельный диск).'
   },
   {
     icon: '🎭',
     title: 'НЕ ДОВЕРЯЙ ЗВОНКАМ "ИЗ БАНКА"',
-    text: 'Настоящий банк <strong>никогда не просит код из SMS</strong>, CVV-код карты или полный пароль. Если звонят и торопят — это мошенники, даже если номер похож на банковский.',
+    text: 'Настоящий банк <strong>никогда не просит код из SMS</strong>, CVV-код карты или полный пароль. Если торопят — это мошенники.',
     how: 'КАК: положи трубку и перезвони сам по номеру с обратной стороны карты. Никогда не диктуй коды и не устанавливай приложения по просьбе "сотрудника".'
   },
   {
     icon: '👁️',
     title: 'МИНИМУМ ЛИЧНЫХ ДАННЫХ',
-    text: 'Не публикуй в соцсетях <strong>дату рождения, адрес, номер телефона, фото документов</strong>. Эта информация используется для взлома и социальной инженерии.',
+    text: 'Не публикуй в соцсетях <strong>дату рождения, адрес, номер телефона, фото документов</strong>. Это используется для взлома.',
     how: 'КАК: проверь настройки приватности — скрой профиль от посторонних. Перед регистрацией на сайте подумай: реально ли ему нужны все эти данные?'
   },
   {
     icon: '📧',
     title: 'РАЗНЫЕ ПОЧТЫ ДЛЯ РАЗНЫХ ЦЕЛЕЙ',
-    text: 'Используй <strong>отдельную email-почту</strong> для важных аккаунтов (банк, госуслуги) и другую — для регистраций на сомнительных сайтах. Утечка одной не затронет другую.',
+    text: 'Используй <strong>отдельную email-почту</strong> для важных аккаунтов и другую — для регистраций на сомнительных сайтах.',
     how: 'КАК: заведи 2-3 почты или используй сервисы одноразовых email (SimpleLogin, AnonAddy). Адрес главной почты никому не давай без необходимости.'
   },
   {
     icon: '🚫',
     title: 'НЕ СКАЧИВАЙ ПО ССЫЛКАМ ИЗ СООБЩЕНИЙ',
-    text: 'Файлы и APK-приложения из мессенджеров, SMS или email — <strong>самый частый способ заражения</strong> телефона вирусом-шпионом, который крадёт пароли и деньги.',
+    text: 'Файлы и APK из мессенджеров или SMS — <strong>самый частый способ заражения</strong> телефона вирусом-шпионом.',
     how: 'КАК: устанавливай приложения только из официальных магазинов (Google Play, App Store, RuStore). На Android отключи "Установку из неизвестных источников".'
   }
 ];
@@ -787,32 +1191,52 @@ const gameInfo = {
   phishing: {
     icon: '📧',
     title: 'ФИШИНГ',
-    desc1: '<strong>ЦЕЛЬ:</strong> определи опасные письма<br><br><strong>УПРАВЛЕНИЕ:</strong><br>👆 <strong>ТАП</strong> по письму = это <strong>ФИШИНГ</strong> (удалить)<br>👉 <strong>СВАЙП</strong> в сторону = письмо <strong>БЕЗОПАСНО</strong><br><br><strong>ПОДСКАЗКА:</strong> ищи опечатки в адресе (paypa<u>1</u>.com), угрозы и обещания денег',
-    desc2: '<strong>УРОВЕНЬ 2:</strong> писем больше, падают быстрее, фишинг изощрённее. Будь внимателен к деталям!'
+    desc: '<strong>ЦЕЛЬ:</strong> определи опасные письма<br><br><strong>УПРАВЛЕНИЕ:</strong><br>👆 <strong>ТАП</strong> по письму = <strong>ФИШИНГ</strong><br>👉 <strong>СВАЙП</strong> в сторону = <strong>БЕЗОПАСНО</strong><br><br><strong>СОВЕТ:</strong> ищи опечатки в адресе (paypa<u>1</u>.com), угрозы и обещания денег'
   },
   firewall: {
     icon: '🔥',
     title: 'ФАЙРВОЛ',
-    desc1: '<strong>ЦЕЛЬ:</strong> защити систему от вирусов<br><br><strong>УПРАВЛЕНИЕ:</strong><br>👆 <strong>ВОДИ ПАЛЬЦЕМ</strong> по экрану — щит следует за тобой<br><br><strong>ПРАВИЛА:</strong><br>🦠 <strong>Вирусы</strong> — блокируй щитом<br>📦 <strong>Пакеты данных</strong> — пропускай вниз',
-    desc2: '<strong>УРОВЕНЬ 2:</strong> вирусов больше, скорость выше, нужно заблокировать 12 угроз!'
+    desc: '<strong>ЦЕЛЬ:</strong> защити систему от вирусов<br><br><strong>УПРАВЛЕНИЕ:</strong><br>👆 <strong>ВОДИ ПАЛЬЦЕМ</strong> — щит следует за тобой<br><br><strong>ПРАВИЛА:</strong><br>🦠 <strong>Вирусы</strong> — блокируй щитом<br>📦 <strong>Пакеты</strong> — пропускай вниз'
   },
   password: {
     icon: '🔑',
     title: 'ПАРОЛЬ',
-    desc1: '<strong>ЦЕЛЬ:</strong> собери надёжный пароль<br><br><strong>УПРАВЛЕНИЕ:</strong><br>👆 <strong>ВОДИ ПАЛЬЦЕМ</strong> — корзина движется за тобой<br><br><strong>ЛОВИ:</strong> 🟢 буквы A-Z, цифры 0-9, символы !@#<br><strong>ИЗБЕГАЙ:</strong> 🔴 кириллицы и слабых символов',
-    desc2: '<strong>УРОВЕНЬ 2:</strong> пароль из 14 символов, всё падает быстрее, больше ловушек!'
+    desc: '<strong>ЦЕЛЬ:</strong> собери надёжный пароль<br><br><strong>УПРАВЛЕНИЕ:</strong><br>👆 <strong>ВОДИ ПАЛЬЦЕМ</strong> — корзина движется за тобой<br><br><strong>ЛОВИ:</strong> 🟢 A-Z, 0-9, !@#<br><strong>ИЗБЕГАЙ:</strong> 🔴 кириллицы'
   },
   captcha: {
     icon: '✅',
     title: 'КАПЧА',
-    desc1: '<strong>ЦЕЛЬ:</strong> подтверди что ты не робот<br><br><strong>УПРАВЛЕНИЕ:</strong><br>👆 <strong>ТАП</strong> по нужным изображениям<br>✓ нажми <strong>ПРОВЕРИТЬ</strong><br><br><strong>ВНИМАНИЕ:</strong> ограничение по времени! Выбирай ВСЕ нужные клетки',
-    desc2: '<strong>УРОВЕНЬ 2:</strong> сетка 4x4, меньше времени, нужно решить 4 капчи подряд!'
+    desc: '<strong>ЦЕЛЬ:</strong> подтверди что ты не робот<br><br><strong>УПРАВЛЕНИЕ:</strong><br>👆 <strong>ТАП</strong> по нужным изображениям<br>✓ нажми <strong>ПРОВЕРИТЬ</strong><br><br><strong>ВНИМАНИЕ:</strong> ограничение по времени!'
   },
   antivirus: {
     icon: '🦠',
     title: 'АНТИВИРУС',
-    desc1: '<strong>ЦЕЛЬ:</strong> уничтожь все угрозы<br><br><strong>УПРАВЛЕНИЕ:</strong><br>👆 <strong>ТАП</strong> на угрозу, потом на <strong>ПАРНУЮ</strong> такую же<br><br><strong>ПРАВИЛА:</strong> соединяй пары одинаковых угроз. У тебя ограничено время!',
-    desc2: '<strong>УРОВЕНЬ 2:</strong> поле 5x4, больше типов угроз, меньше времени!'
+    desc: '<strong>ЦЕЛЬ:</strong> уничтожь все угрозы<br><br><strong>УПРАВЛЕНИЕ:</strong><br>👆 <strong>ТАП</strong> на угрозу, потом на <strong>ПАРНУЮ</strong> такую же<br><br><strong>ПРАВИЛА:</strong> соединяй пары угроз. Время ограничено!'
+  },
+  encryption: {
+    icon: '🔐',
+    title: 'ШИФР ЦЕЗАРЯ',
+    desc: '<strong>ЦЕЛЬ:</strong> расшифруй секретное слово<br><br><strong>СУТЬ:</strong> каждая буква сдвинута на N позиций по алфавиту<br><br><strong>ПРИМЕР:</strong> при сдвиге +1 буква <strong>A → B</strong>, <strong>B → C</strong><br><br>👆 <strong>ТАП</strong> по буквам, чтобы собрать ответ'
+  },
+  permissions: {
+    icon: '🛡️',
+    title: 'РАЗРЕШЕНИЯ',
+    desc: '<strong>ЦЕЛЬ:</strong> настрой приватность приложений<br><br><strong>ПРАВИЛА:</strong><br>✅ <strong>РАЗРЕШИ</strong> только нужное приложению<br>❌ <strong>ЗАПРЕТИ</strong> подозрительные запросы<br><br><strong>ПРИМЕР:</strong> фонарику не нужен доступ к контактам!'
+  },
+  social: {
+    icon: '📞',
+    title: 'СОЦ. ИНЖЕНЕРИЯ',
+    desc: '<strong>ЦЕЛЬ:</strong> распознай мошенника<br><br><strong>ПРАВИЛА:</strong><br>👆 Выбери <strong>ПРАВИЛЬНЫЙ</strong> ответ на каждый вопрос<br><br><strong>ПОМНИ:</strong> банк никогда не просит коды из SMS и не торопит с решением!'
+  },
+  patch: {
+    icon: '🔧',
+    title: 'ПАТЧИ',
+    desc: '<strong>ЦЕЛЬ:</strong> закрой уязвимости<br><br><strong>ПРАВИЛА:</strong><br>👆 <strong>ТАП</strong> по 🐛 багам — быстро!<br>❌ <strong>НЕ ТРОГАЙ</strong> ✅ зелёные ячейки<br><br><strong>ВНИМАНИЕ:</strong> баги исчезают сами через 2 секунды!'
+  },
+  dataleak: {
+    icon: '💧',
+    title: 'УТЕЧКА ДАННЫХ',
+    desc: '<strong>ЦЕЛЬ:</strong> защити личные данные<br><br><strong>ПРАВИЛА:</strong><br>🔴 <strong>ТАП</strong> по <strong>ПРИВАТНЫМ</strong> данным (пароль, карта)<br>🟢 <strong>НЕ ТРОГАЙ</strong> публичные (имя, город)<br><br>Не дай приватным данным "утечь"!'
   }
 };
 
@@ -862,6 +1286,7 @@ function showTutorial() {
   $('gameScreen').classList.remove('active');
   $('adviceScreen').classList.remove('active');
   $('tutorialScreen').classList.add('active');
+  $('tutorialScreen').scrollTop = 0;
   
   const lvl = levels[state.current];
   const info = gameInfo[lvl.game];
@@ -869,7 +1294,7 @@ function showTutorial() {
   $('tutLevel').textContent = 'УРОВЕНЬ ' + String(state.current+1).padStart(2,'0') + '/10';
   $('tutIcon').textContent = info.icon;
   $('tutTitle').textContent = info.title;
-  $('tutDesc').innerHTML = lvl.difficulty === 1 ? info.desc1 : info.desc2;
+  $('tutDesc').innerHTML = info.desc;
   
   let count = TUTORIAL_TIME;
   $('tutCount').textContent = count;
@@ -882,7 +1307,7 @@ function showTutorial() {
     bar.style.width = '100%';
   }, 50);
   
-    if(tutorialTimer) clearInterval(tutorialTimer);
+  if(tutorialTimer) clearInterval(tutorialTimer);
   tutorialTimer = setInterval(() => {
     count--;
     $('tutCount').textContent = count;
@@ -908,30 +1333,29 @@ function beginLevel() {
 function startLevel() {
   clearTimers();
   area.innerHTML = '';
-  const lvl = levels[state.current];
-  const g = lvl.game;
-  const d = lvl.difficulty;
-  if(g==='phishing') initPhishing(d);
-  else if(g==='firewall') initFirewall(d);
-  else if(g==='password') initPassword(d);
-  else if(g==='captcha') initCaptcha(d);
-  else if(g==='antivirus') initAntivirus(d);
+  const g = levels[state.current].game;
+  if(g==='phishing') initPhishing();
+  else if(g==='firewall') initFirewall();
+  else if(g==='password') initPassword();
+  else if(g==='captcha') initCaptcha();
+  else if(g==='antivirus') initAntivirus();
+  else if(g==='encryption') initEncryption();
+  else if(g==='permissions') initPermissions();
+  else if(g==='social') initSocial();
+  else if(g==='patch') initPatch();
+  else if(g==='dataleak') initDataLeak();
 }
 
-// === ЭКРАН СОВЕТА ===
 let adviceTimer = null;
 function showAdvice() {
-  // Если жизней нет — сразу на экран поражения
   if(state.lives <= 0) return endGame(false);
-  // Если все уровни пройдены — победа
-  if(state.current >= 10) return endGame(true);
   
   clearTimers();
   $('gameScreen').classList.remove('active');
   $('tutorialScreen').classList.remove('active');
   $('adviceScreen').classList.add('active');
+  $('adviceScreen').scrollTop = 0;
   
-  // Совет соответствует только что пройденному уровню (state.current - 1)
   const adviceIndex = state.current - 1;
   const advice = adviceList[adviceIndex];
   
@@ -962,7 +1386,8 @@ function showAdvice() {
     if(count <= 0) {
       clearInterval(adviceTimer);
       adviceTimer = null;
-      showTutorial();
+      if(state.current >= 10) endGame(true);
+      else showTutorial();
     }
   }, 1000);
 }
@@ -970,33 +1395,15 @@ function showAdvice() {
 function skipAdvice() {
   if(adviceTimer) { clearInterval(adviceTimer); adviceTimer = null; }
   $('adviceCount').style.color = '';
-  showTutorial();
+  if(state.current >= 10) endGame(true);
+  else showTutorial();
 }
 
-// Вызывается после успешного прохождения уровня
 function nextGame() {
   state.current++;
-  // Если ещё есть уровни — сначала совет, потом туториал
-  if(state.current < 10) {
-    showAdvice();
-  } else {
-    // После 10-го уровня тоже показываем последний совет, затем победа
-    showAdvice();
-  }
+  showAdvice();
 }
 
-function endGame(win) {
-  state.gameActive = false;
-  clearTimers();
-  if(tutorialTimer) { clearInterval(tutorialTimer); tutorialTimer = null; }
-  if(adviceTimer) { clearInterval(adviceTimer); adviceTimer = null; }
-  $('gameScreen').classList.remove('active');
-  $('tutorialScreen').classList.remove('active');
-  $('adviceScreen').classList.remove('active');
-  $('endScreen').classList.add('active');
-  $('endTitle').textContent = win ? 'VICTORY' : 'GAME OVER';
-  $('endTitle').setAttribute('data-text', win ? 'VICTORY' : 'GAME OVER');
-  $('endStatus').textContent = win ? 'SYSTEM SECURED' : 'SYSTEM BREACHED';
   $('endText').textContent = win ? 'Ты прошёл все 10 уровней!' : 'Атаки прорвали защиту...';
   $('endScore').textContent = String(state.score).padStart(4,'0');
   
@@ -1036,18 +1443,13 @@ function copyPrizeLink() {
       cb.classList.remove('copied');
     }, 2000);
   };
-  
   if(navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(PRIZE_URL).then(onSuccess).catch(() => { fallbackCopy(); });
-  } else {
-    fallbackCopy();
-  }
-  
+  } else { fallbackCopy(); }
   function fallbackCopy() {
     const ta = document.createElement('textarea');
     ta.value = PRIZE_URL;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
     document.body.appendChild(ta);
     ta.select();
     try { document.execCommand('copy'); onSuccess(); } catch(e) {}
@@ -1056,7 +1458,7 @@ function copyPrizeLink() {
 }
 
 /* ============ ИГРА 1: PHISHING ============ */
-function initPhishing(diff) {
+function initPhishing() {
   state.gameActive = true;
   const phish = [
     {from:'support@paypa1.com', subj:'Срочно! Аккаунт заблокирован', preview:'Перейдите по ссылке немедленно'},
@@ -1078,9 +1480,9 @@ function initPhishing(diff) {
   ];
   
   let processed = 0;
-  const needed = diff === 1 ? 6 : 8;
-  const speed = diff === 1 ? 1.3 : 1.9;
-  const spawnRate = diff === 1 ? 2800 : 2000;
+  const needed = 7;
+  const speed = 1.5;
+  const spawnRate = 2400;
   
   const hint = document.createElement('div');
   hint.className = 'swipe-hint';
@@ -1160,7 +1562,7 @@ function initPhishing(diff) {
 }
 
 /* ============ ИГРА 2: FIREWALL ============ */
-function initFirewall(diff) {
+function initFirewall() {
   state.gameActive = true;
   const shield = document.createElement('div');
   shield.id = 'shield';
@@ -1168,7 +1570,7 @@ function initFirewall(diff) {
   area.appendChild(shield);
   
   const info = document.createElement('div');
-  info.style.cssText = 'position:absolute;top:10px;left:10px;right:10px;text-align:center;font-size:11px;color:#00ffcc88;z-index:5;letter-spacing:1px';
+  info.style.cssText = 'position:absolute;top:8px;left:8px;right:8px;text-align:center;font-size:10px;color:#00ffcc88;z-index:5;letter-spacing:1px';
   info.textContent = '> 🦠 БЛОКИРУЙ // 📦 ПРОПУСКАЙ';
   area.appendChild(info);
   
@@ -1180,16 +1582,16 @@ function initFirewall(diff) {
     const rect = area.getBoundingClientRect();
     const touch = e.touches ? e.touches[0] : e;
     shieldX = touch.clientX - rect.left;
-    shieldX = Math.max(40, Math.min(area.offsetWidth-40, shieldX));
+    shieldX = Math.max(36, Math.min(area.offsetWidth-36, shieldX));
     shield.style.left = shieldX + 'px';
   }
   area.addEventListener('touchmove', moveHandler, {passive:true});
   area.addEventListener('mousemove', moveHandler);
   
   let blocked = 0;
-  const needed = diff === 1 ? 8 : 12;
-  let speed = diff === 1 ? 2.5 : 3.5;
-  const spawnRate = diff === 1 ? 1000 : 700;
+  const needed = 10;
+  let speed = 3;
+  const spawnRate = 850;
   
   function spawnPacket() {
     if(!state.gameActive || blocked >= needed) return;
@@ -1197,7 +1599,7 @@ function initFirewall(diff) {
     const p = document.createElement('div');
     p.className = 'packet ' + (isVirus?'virus':'safe');
     p.textContent = isVirus ? '🦠' : '📦';
-    const x = Math.random() * (area.offsetWidth - 50);
+    const x = Math.random() * (area.offsetWidth - 48);
     p.style.left = x + 'px';
     p.style.top = '0px';
     area.appendChild(p);
@@ -1207,12 +1609,10 @@ function initFirewall(diff) {
       if(!state.gameActive) { clearInterval(anim); p.remove(); return; }
       y += speed;
       p.style.top = y + 'px';
-      
-      const sBottom = area.offsetHeight - 30;
-      const sTop = sBottom - 80;
-      const px = x + 25;
-      
-      if(y+50 >= sTop && y <= sBottom && Math.abs(px - shieldX) < 50) {
+      const sBottom = area.offsetHeight - 25;
+      const sTop = sBottom - 72;
+      const px = x + 24;
+      if(y+48 >= sTop && y <= sBottom && Math.abs(px - shieldX) < 48) {
         clearInterval(anim);
         if(isVirus) { state.score += 10; blocked++; }
         else { if(loseLife()) { p.remove(); return; } }
@@ -1221,7 +1621,6 @@ function initFirewall(diff) {
         if(blocked >= needed) { state.gameActive=false; setTimeout(nextGame, 600); }
         return;
       }
-      
       if(y > area.offsetHeight) {
         clearInterval(anim);
         p.remove();
@@ -1235,13 +1634,13 @@ function initFirewall(diff) {
   setI(()=> {
     if(state.gameActive && blocked < needed) {
       spawnPacket();
-      speed = Math.min(diff === 1 ? 5 : 7, speed + 0.05);
+      speed = Math.min(5.5, speed + 0.06);
     }
   }, spawnRate);
 }
 
 /* ============ ИГРА 3: PASSWORD ============ */
-function initPassword(diff) {
+function initPassword() {
   state.gameActive = true;
   let password = '';
   
@@ -1251,7 +1650,7 @@ function initPassword(diff) {
   area.appendChild(display);
   
   const info = document.createElement('div');
-  info.style.cssText = 'position:absolute;top:50px;left:10px;right:10px;text-align:center;font-size:11px;color:#00ffcc88;z-index:5;letter-spacing:1px';
+  info.style.cssText = 'position:absolute;top:44px;left:8px;right:8px;text-align:center;font-size:10px;color:#00ffcc88;z-index:5;letter-spacing:1px';
   info.textContent = '> ЛОВИ A-Z 0-9 !@# // ИЗБЕГАЙ КРАСНЫЕ';
   area.appendChild(info);
   
@@ -1267,18 +1666,18 @@ function initPassword(diff) {
     const rect = area.getBoundingClientRect();
     const touch = e.touches ? e.touches[0] : e;
     basketX = touch.clientX - rect.left;
-    basketX = Math.max(50, Math.min(area.offsetWidth-50, basketX));
+    basketX = Math.max(48, Math.min(area.offsetWidth-48, basketX));
     basket.style.left = basketX + 'px';
   }
   area.addEventListener('touchmove', moveHandler, {passive:true});
   area.addEventListener('mousemove', moveHandler);
   
   const goodChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789!@#$%&*';
-  const badChars = diff === 1 ? 'абвгдежзий' : 'абвгдежзий 12345';
-  const needed = diff === 1 ? 10 : 14;
-  const baseSpeed = diff === 1 ? 2 : 2.8;
-  const spawnRate = diff === 1 ? 800 : 550;
-  const goodProb = diff === 1 ? 0.6 : 0.5;
+  const badChars = 'абвгдежзий';
+  const needed = 12;
+  const baseSpeed = 2.3;
+  const spawnRate = 750;
+  const goodProb = 0.58;
   
   function spawnChar() {
     if(!state.gameActive || password.length >= needed) return;
@@ -1287,7 +1686,7 @@ function initPassword(diff) {
     const el = document.createElement('div');
     el.className = 'char ' + (isGood?'good':'bad');
     el.textContent = ch;
-    const x = Math.random() * (area.offsetWidth - 45);
+    const x = Math.random() * (area.offsetWidth - 42);
     el.style.left = x + 'px';
     el.style.top = '0px';
     area.appendChild(el);
@@ -1298,12 +1697,10 @@ function initPassword(diff) {
       if(!state.gameActive) { clearInterval(anim); el.remove(); return; }
       y += speed;
       el.style.top = y + 'px';
-      
-      const bBottom = area.offsetHeight - 20;
-      const bTop = bBottom - 35;
-      const cx = x + 22;
-      
-      if(y+45 >= bTop && y <= bBottom && Math.abs(cx - basketX) < 60) {
+      const bBottom = area.offsetHeight - 15;
+      const bTop = bBottom - 32;
+      const cx = x + 21;
+      if(y+42 >= bTop && y <= bBottom && Math.abs(cx - basketX) < 58) {
         clearInterval(anim);
         if(isGood) {
           password += ch;
@@ -1323,7 +1720,6 @@ function initPassword(diff) {
         el.remove();
         return;
       }
-      
       if(y > area.offsetHeight) { clearInterval(anim); el.remove(); }
     }, 16);
   }
@@ -1332,7 +1728,7 @@ function initPassword(diff) {
 }
 
 /* ============ ИГРА 4: CAPTCHA ============ */
-function initCaptcha(diff) {
+function initCaptcha() {
   state.gameActive = true;
   const tasks = [
     {q:'Выбери все 🚗 машины', target:'🚗', pool:['🚗','🚲','🛵','🚂','✈️','🚦','🏠','🌳','🚀','🚁']},
@@ -1341,15 +1737,13 @@ function initCaptcha(diff) {
     {q:'Выбери все 🚲 велосипеды', target:'🚲', pool:['🚲','🚗','✈️','🛵','🚦','🌳','🏠','🚂','🛴']},
     {q:'Выбери все 🏠 дома', target:'🏠', pool:['🏠','🌳','🚗','🌉','🚲','🚦','🏢','🏰','✈️']},
     {q:'Выбери все 🌳 деревья', target:'🌳', pool:['🌳','🌲','🏠','🚗','🌵','🌴','🚦','🌉','🌊']},
-    {q:'Выбери все ✈️ самолёты', target:'✈️', pool:['✈️','🚁','🚀','🚗','🛵','🏠','✈️','🌳','🚦']},
-    {q:'Выбери все 🚀 ракеты', target:'🚀', pool:['🚀','✈️','🚁','🛸','🚗','🏠','🌳','🚦','🌉']},
   ];
   
   let round = 0;
-  const totalRounds = diff === 1 ? 3 : 4;
-  const gridSize = diff === 1 ? 3 : 4;
-  const totalCells = gridSize * gridSize;
-  const startTime = diff === 1 ? 12 : 10;
+  const totalRounds = 3;
+  const gridSize = 3;
+  const totalCells = 9;
+  const startTime = 12;
   
   function nextRound() {
     if(!state.gameActive) return;
@@ -1360,10 +1754,8 @@ function initCaptcha(diff) {
       setTimeout(nextGame, 600);
       return;
     }
-    
     area.innerHTML = '';
     const task = tasks[Math.floor(Math.random()*tasks.length)];
-    
     const taskEl = document.createElement('div');
     taskEl.className = 'captcha-task';
     taskEl.textContent = '[' + (round+1) + '/' + totalRounds + '] ' + task.q;
@@ -1373,15 +1765,12 @@ function initCaptcha(diff) {
     const cells = [];
     for(let i = 0; i < targetCount; i++) cells.push(task.target);
     const others = task.pool.filter(x => x !== task.target);
-    while(cells.length < totalCells) {
-      cells.push(others[Math.floor(Math.random()*others.length)]);
-    }
+    while(cells.length < totalCells) cells.push(others[Math.floor(Math.random()*others.length)]);
     cells.sort(()=> Math.random()-0.5);
     
-        const grid = document.createElement('div');
+    const grid = document.createElement('div');
     grid.className = 'captcha-grid';
     grid.style.gridTemplateColumns = 'repeat(' + gridSize + ', 1fr)';
-    
     const selected = new Set();
     
     cells.forEach((emoji, i) => {
@@ -1390,29 +1779,22 @@ function initCaptcha(diff) {
       cell.textContent = emoji;
       cell.addEventListener('click', ()=> {
         if(!state.gameActive) return;
-        if(selected.has(i)) {
-          selected.delete(i);
-          cell.classList.remove('selected');
-        } else {
-          selected.add(i);
-          cell.classList.add('selected');
-        }
+        if(selected.has(i)) { selected.delete(i); cell.classList.remove('selected'); }
+        else { selected.add(i); cell.classList.add('selected'); }
       });
       grid.appendChild(cell);
     });
     area.appendChild(grid);
     
     const timerEl = document.createElement('div');
-    timerEl.style.cssText = 'text-align:center;font-size:16px;font-weight:bold;color:#00ffcc;padding:5px;font-family:Orbitron,sans-serif;letter-spacing:2px;text-shadow:0 0 8px #00ffcc';
+    timerEl.style.cssText = 'text-align:center;font-size:14px;font-weight:bold;color:#00ffcc;padding:4px;font-family:Orbitron,sans-serif;letter-spacing:2px;text-shadow:0 0 8px #00ffcc';
     let timeLeft = startTime;
     timerEl.textContent = '⏱ ' + timeLeft + 'с';
     area.appendChild(timerEl);
     
     const submitBtn = document.createElement('button');
     submitBtn.className = 'btn';
-    submitBtn.style.margin = '10px auto';
-    submitBtn.style.minWidth = '180px';
-    submitBtn.style.padding = '12px 25px';
+    submitBtn.style.cssText = 'margin:8px auto;min-width:160px;padding:10px 20px;font-size:13px';
     submitBtn.textContent = 'ПРОВЕРИТЬ';
     area.appendChild(submitBtn);
     
@@ -1421,21 +1803,15 @@ function initCaptcha(diff) {
       timeLeft--;
       timerEl.textContent = '⏱ ' + timeLeft + 'с';
       if(timeLeft <= 3) timerEl.classList.add('timer-low');
-      if(timeLeft <= 0) {
-        clearInterval(timer);
-        checkAnswer(true);
-      }
+      if(timeLeft <= 0) { clearInterval(timer); checkAnswer(true); }
     }, 1000);
     
     function checkAnswer(timeout) {
       clearInterval(timer);
       let correct = true;
       cells.forEach((emoji, i) => {
-        const shouldSelect = emoji === task.target;
-        const isSelected = selected.has(i);
-        if(shouldSelect !== isSelected) correct = false;
+        if((emoji === task.target) !== selected.has(i)) correct = false;
       });
-      
       if(correct && !timeout) {
         state.score += 25;
         showMsg('✓ ВЕРНО', 800);
@@ -1449,35 +1825,28 @@ function initCaptcha(diff) {
         setTimeout(nextRound, 900);
       }
     }
-    
     submitBtn.addEventListener('click', ()=> checkAnswer(false));
   }
-  
   nextRound();
 }
 
 /* ============ ИГРА 5: ANTIVIRUS ============ */
-function initAntivirus(diff) {
+function initAntivirus() {
   state.gameActive = true;
-  
   const info = document.createElement('div');
-  info.style.cssText = 'position:absolute;top:5px;left:10px;right:10px;text-align:center;font-size:11px;color:#00ffcc88;z-index:10;letter-spacing:1px';
+  info.style.cssText = 'position:absolute;top:5px;left:8px;right:8px;text-align:center;font-size:10px;color:#00ffcc88;z-index:10;letter-spacing:1px';
   info.textContent = '> СОЕДИНЯЙ ПАРЫ УГРОЗ';
   area.appendChild(info);
   
-  const allThreats = ['🦠','🐛','👾','💀','🔓','⚠️','☠️','🕷️','👹','🤖'];
-  const rows = diff === 1 ? 4 : 5;
-  const cols = diff === 1 ? 3 : 4;
+  const allThreats = ['🦠','🐛','👾','💀','🔓','⚠️','☠️','🕷️'];
+  const rows = 4, cols = 3;
   const total = rows * cols;
   const pairsCount = total / 2;
-  const startTime = diff === 1 ? 30 : 35;
+  const startTime = 30;
   
   const threats = allThreats.slice(0, pairsCount);
   const cells = [];
-  for(let i=0; i<pairsCount; i++) {
-    const t = threats[i % threats.length];
-    cells.push(t, t);
-  }
+  for(let i=0; i<pairsCount; i++) { const t = threats[i]; cells.push(t, t); }
   cells.sort(()=> Math.random()-0.5);
   
   const grid = document.createElement('div');
@@ -1486,13 +1855,10 @@ function initAntivirus(diff) {
   grid.style.gridTemplateRows = 'repeat(' + rows + ', 1fr)';
   area.appendChild(grid);
   
-  let selected = null;
-  let matched = 0;
-  let canClick = true;
-  let timeLeft = startTime;
+  let selected = null, matched = 0, canClick = true, timeLeft = startTime;
   
   const timerEl = document.createElement('div');
-  timerEl.style.cssText = 'position:absolute;bottom:5px;left:0;right:0;text-align:center;font-size:16px;font-weight:bold;color:#00ffcc;z-index:10;font-family:Orbitron,sans-serif;letter-spacing:2px;text-shadow:0 0 8px #00ffcc';
+  timerEl.style.cssText = 'position:absolute;bottom:5px;left:0;right:0;text-align:center;font-size:14px;font-weight:bold;color:#00ffcc;z-index:10;font-family:Orbitron,sans-serif;letter-spacing:2px;text-shadow:0 0 8px #00ffcc';
   timerEl.textContent = '⏱ ' + timeLeft + 'с';
   area.appendChild(timerEl);
   
@@ -1504,80 +1870,503 @@ function initAntivirus(diff) {
     if(timeLeft <= 0) {
       clearInterval(timer);
       state.gameActive = false;
-      if(matched < pairsCount) {
-        loseLife();
-        showMsg('⏱ ВРЕМЯ ВЫШЛО', 1000);
-      }
+      if(matched < pairsCount) { loseLife(); showMsg('⏱ ВРЕМЯ ВЫШЛО', 1000); }
       setTimeout(nextGame, 1200);
     }
   }, 1000);
   
-  cells.forEach((emoji, i) => {
-    const cell = document.createElement('div');
-    cell.className = 'av-cell';
-    cell.textContent = emoji;
-    cell.dataset.emoji = emoji;
-    
-    cell.addEventListener('click', ()=> {
-      if(!state.gameActive || !canClick) return;
-      if(cell.classList.contains('matched') || cell.classList.contains('selected')) return;
-      
-      cell.classList.add('selected');
-      
-      if(!selected) {
-        selected = cell;
-      } else {
-        canClick = false;
-        if(selected.dataset.emoji === cell.dataset.emoji) {
-          const s = selected;
-          setTimeout(()=> {
-            s.classList.add('matched');
-            cell.classList.add('matched');
-            s.classList.remove('selected');
-            cell.classList.remove('selected');
-            selected = null;
-            matched++;
-            state.score += 15;
+        cell.classList.add('selected');
+      if(!selected) { selected = cell; return; }
+      canClick = false;
+      if(selected.dataset.emoji === cell.dataset.emoji) {
+        const a = selected, b = cell;
+        setTimeout(()=> {
+          a.classList.remove('selected'); b.classList.remove('selected');
+          a.classList.add('matched'); b.classList.add('matched');
+          matched++;
+          state.score += 15;
+          updateHUD();
+          selected = null; canClick = true;
+          if(matched >= pairsCount) {
+            state.gameActive = false;
+            clearInterval(timer);
+            state.score += 30;
             updateHUD();
-            canClick = true;
-            
-            if(matched >= pairsCount) {
-              clearInterval(timer);
-              state.gameActive = false;
-              state.score += 50;
-              updateHUD();
-              showMsg('🛡 СИСТЕМА ОЧИЩЕНА', 1200);
-              setTimeout(nextGame, 1300);
-            }
-          }, 300);
-        } else {
-          const s = selected;
-          setTimeout(()=> {
-            s.classList.remove('selected');
-            cell.classList.remove('selected');
-            selected = null;
-            canClick = true;
-          }, 600);
-        }
+            showMsg('🦠 ОЧИЩЕНО', 1000);
+            setTimeout(nextGame, 1100);
+          }
+        }, 300);
+      } else {
+        const a = selected, b = cell;
+        setTimeout(()=> {
+          a.classList.remove('selected'); b.classList.remove('selected');
+          selected = null; canClick = true;
+        }, 600);
       }
     });
-    
     grid.appendChild(cell);
   });
 }
 
-// === Кнопки ===
-document.getElementById('startBtn').addEventListener('click', startGame);
-document.getElementById('restartBtn').addEventListener('click', startGame);
-document.getElementById('skipTutBtn').addEventListener('click', beginLevel);
-document.getElementById('skipAdviceBtn').addEventListener('click', skipAdvice);
-document.getElementById('copyBtn').addEventListener('click', copyPrizeLink);
+/* ============ ИГРА 6: ENCRYPTION ============ */
+function initEncryption() {
+  state.gameActive = true;
+  const words = ['ПАРОЛЬ','ВИРУС','ХАКЕР','ДАННЫЕ','ЗАЩИТА','ДОСТУП','СЕРВЕР','КЛЮЧ'];
+  const word = words[Math.floor(Math.random()*words.length)];
+  const shift = Math.floor(Math.random()*3) + 1;
+  const alphabet = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+  
+  function encode(ch) {
+    const idx = alphabet.indexOf(ch);
+    if(idx === -1) return ch;
+    return alphabet[(idx + shift) % alphabet.length];
+  }
+  const encoded = word.split('').map(encode).join('');
+  
+  const wrap = document.createElement('div');
+  wrap.className = 'crypto-wrap';
+  
+  const task = document.createElement('div');
+  task.className = 'crypto-task';
+  task.innerHTML = '🔐 Расшифруй слово<br>Сдвиг: <strong style="color:#00ffcc">+' + shift + '</strong> по алфавиту';
+  wrap.appendChild(task);
+  
+  const enc = document.createElement('div');
+  enc.className = 'crypto-encoded';
+  enc.textContent = encoded;
+  wrap.appendChild(enc);
+  
+  const ans = document.createElement('div');
+  ans.className = 'crypto-answer';
+  ans.textContent = '_'.repeat(word.length);
+  wrap.appendChild(ans);
+  
+  let answer = '';
+  function updateAns() {
+    ans.textContent = answer + '_'.repeat(Math.max(0, word.length - answer.length));
+  }
+  
+  const correctLetters = word.split('');
+  const letterSet = new Set(correctLetters);
+  while(letterSet.size < Math.min(12, alphabet.length)) {
+    letterSet.add(alphabet[Math.floor(Math.random()*alphabet.length)]);
+  }
+  const letters = Array.from(letterSet).sort(()=> Math.random()-0.5);
+  
+  const keyboard = document.createElement('div');
+  keyboard.className = 'crypto-keyboard';
+  
+  letters.forEach(letter => {
+    const key = document.createElement('button');
+    key.className = 'crypto-key';
+    key.textContent = letter;
+    key.addEventListener('click', ()=> {
+      if(!state.gameActive || answer.length >= word.length) return;
+      const expected = correctLetters[answer.length];
+      if(letter === expected) {
+        answer += letter;
+        state.score += 10;
+        updateAns();
+        updateHUD();
+        if(answer.length === word.length) {
+          state.gameActive = false;
+          state.score += 40;
+          ans.style.color = '#00ff66';
+          ans.style.textShadow = '0 0 15px #00ff66';
+          updateHUD();
+          showMsg('🔓 РАСШИФРОВАНО', 1200);
+          setTimeout(nextGame, 1300);
+        }
+      } else {
+        key.style.background = 'rgba(255,0,85,0.4)';
+        setTimeout(()=> key.style.background = '', 300);
+        if(loseLife()) return;
+      }
+    });
+    keyboard.appendChild(key);
+  });
+  wrap.appendChild(keyboard);
+  area.appendChild(wrap);
+}
 
-// === Защита от прокрутки/масштаба ===
-document.addEventListener('touchmove', e => {
-  if(e.target.closest('#gameArea')) e.preventDefault();
-}, {passive:false});
-document.addEventListener('gesturestart', e => e.preventDefault());
+/* ============ ИГРА 7: PERMISSIONS ============ */
+function initPermissions() {
+  state.gameActive = true;
+  const apps = [
+    {app:'🔦 Фонарик', perm:'📷 Камера', safe:true},
+    {app:'🔦 Фонарик', perm:'👥 Контакты', safe:false},
+    {app:'📱 Калькулятор', perm:'📍 Геолокация', safe:false},
+    {app:'🗺️ Карты', perm:'📍 Геолокация', safe:true},
+    {app:'📷 Камера', perm:'🖼️ Галерея', safe:true},
+    {app:'🎮 Игра', perm:'💬 SMS', safe:false},
+    {app:'💬 Мессенджер', perm:'🎤 Микрофон', safe:true},
+    {app:'⏰ Будильник', perm:'👥 Контакты', safe:false},
+    {app:'🎵 Музыка', perm:'🎤 Микрофон', safe:false},
+    {app:'📞 Телефон', perm:'👥 Контакты', safe:true},
+    {app:'🌤️ Погода', perm:'📍 Геолокация', safe:true},
+    {app:'🔢 Калькулятор', perm:'📷 Камера', safe:false},
+  ];
+  
+  const wrap = document.createElement('div');
+  wrap.className = 'perm-wrap';
+  area.appendChild(wrap);
+  
+  let round = 0;
+  const totalRounds = 6;
+  const shuffled = apps.slice().sort(()=> Math.random()-0.5);
+  
+  function nextRound() {
+    if(!state.gameActive) return;
+    if(round >= totalRounds) {
+      state.gameActive = false;
+      state.score += 30;
+      updateHUD();
+      setTimeout(nextGame, 600);
+      return;
+    }
+    const data = shuffled[round];
+    wrap.innerHTML = 
+      '<div class="perm-counter">[' + (round+1) + '/' + totalRounds + ']</div>' +
+      '<div class="perm-app">' + data.app + '</div>' +
+      '<div class="perm-request">запрашивает доступ:</div>' +
+      '<div class="perm-perm">' + data.perm + '</div>' +
+      '<div class="perm-question">Разрешить доступ?</div>';
+    
+    const btns = document.createElement('div');
+    btns.className = 'perm-btns';
+    const allowBtn = document.createElement('button');
+    allowBtn.className = 'perm-btn allow';
+    allowBtn.textContent = '✅ РАЗРЕШИТЬ';
+    const denyBtn = document.createElement('button');
+    denyBtn.className = 'perm-btn deny';
+    denyBtn.textContent = '❌ ЗАПРЕТИТЬ';
+    btns.appendChild(allowBtn);
+    btns.appendChild(denyBtn);
+    wrap.appendChild(btns);
+    
+    function answer(allowed) {
+      if(!state.gameActive) return;
+      allowBtn.disabled = true; denyBtn.disabled = true;
+      if(allowed === data.safe) {
+        state.score += 20;
+        showMsg('✓ ВЕРНО', 700);
+        round++;
+        updateHUD();
+        setTimeout(nextRound, 800);
+      } else {
+        showMsg(data.safe ? '✗ ЭТО БЫЛО БЕЗОПАСНО' : '✗ ОПАСНЫЙ ДОСТУП!', 1000);
+        if(loseLife()) return;
+        round++;
+        setTimeout(nextRound, 1100);
+      }
+    }
+    allowBtn.addEventListener('click', ()=> answer(true));
+    denyBtn.addEventListener('click', ()=> answer(false));
+  }
+  nextRound();
+}
+
+/* ============ ИГРА 8: SOCIAL ENGINEERING ============ */
+function initSocial() {
+  state.gameActive = true;
+  const scenarios = [
+    {
+      msg:'📞 "Здравствуйте, это служба безопасности банка. Назовите код из SMS для отмены подозрительной операции"',
+      options:['Назвать код','Положить трубку','Спросить отдел'],
+      correct:1
+    },
+    {
+      msg:'📧 "Вы выиграли iPhone! Для получения оплатите доставку 500₽ по ссылке"',
+      options:['Оплатить','Перейти по ссылке','Удалить письмо'],
+      correct:2
+    },
+    {
+      msg:'💬 "Привет! Это твой друг, я попал в беду, срочно переведи 5000₽ на этот номер"',
+      options:['Перевести','Позвонить другу','Перевести половину'],
+      correct:1
+    },
+    {
+      msg:'📞 "Это техподдержка Microsoft. На вашем ПК вирус, установите программу удалённого доступа"',
+      options:['Установить','Дать доступ','Положить трубку'],
+      correct:2
+    },
+    {
+      msg:'📧 "Ваш аккаунт взломан! Срочно подтвердите пароль на сайте google-security.xyz"',
+      options:['Ввести пароль','Проигнорировать','Перейти на сайт'],
+      correct:1
+    },
+    {
+      msg:'📞 "Здравствуйте, налоговая. У вас задолженность, оплатите штраф картой прямо сейчас по телефону"',
+      options:['Продиктовать карту','Положить трубку','Назвать CVV'],
+      correct:1
+    },
+  ];
+  
+  const wrap = document.createElement('div');
+  wrap.className = 'social-wrap';
+  area.appendChild(wrap);
+  
+  let round = 0;
+  const totalRounds = 5;
+  const shuffled = scenarios.slice().sort(()=> Math.random()-0.5);
+  
+  function nextRound() {
+    if(!state.gameActive) return;
+    if(round >= totalRounds) {
+      state.gameActive = false;
+      state.score += 30;
+      updateHUD();
+      setTimeout(nextGame, 600);
+      return;
+    }
+    const data = shuffled[round];
+    wrap.innerHTML = '<div class="perm-counter">[' + (round+1) + '/' + totalRounds + ']</div>';
+    
+    const msg = document.createElement('div');
+    msg.className = 'social-msg';
+    msg.textContent = data.msg;
+    wrap.appendChild(msg);
+    
+    const opts = document.createElement('div');
+    opts.className = 'social-options';
+    
+    let answered = false;
+    data.options.forEach((opt, i) => {
+      const btn = document.createElement('div');
+      btn.className = 'social-option';
+      btn.textContent = opt;
+      btn.addEventListener('click', ()=> {
+        if(!state.gameActive || answered) return;
+        answered = true;
+        if(i === data.correct) {
+          btn.classList.add('correct');
+          state.score += 20;
+          updateHUD();
+          showMsg('✓ ВЕРНО', 700);
+          round++;
+          setTimeout(nextRound, 800);
+        } else {
+          btn.classList.add('wrong');
+          const correctBtn = opts.children[data.correct];
+          if(correctBtn) correctBtn.classList.add('correct');
+          if(loseLife()) return;
+          round++;
+          setTimeout(nextRound, 1300);
+        }
+      });
+      opts.appendChild(btn);
+    });
+    wrap.appendChild(opts);
+  }
+  nextRound();
+}
+
+/* ============ ИГРА 9: PATCH ============ */
+function initPatch() {
+  state.gameActive = true;
+  const wrap = document.createElement('div');
+  wrap.className = 'patch-wrap';
+  area.appendChild(wrap);
+  
+  const info = document.createElement('div');
+  info.className = 'patch-info';
+  info.textContent = '> ТАП ПО 🐛 БАГАМ // НЕ ТРОГАЙ ✅';
+  wrap.appendChild(info);
+  
+  const stats = document.createElement('div');
+  stats.className = 'patch-stats';
+  stats.innerHTML = '<div><span class="label">ЗАКРЫТО</span><span id="patchCount">0</span>/15</div><div><span class="label">ВРЕМЯ</span><span id="patchTime">25</span>с</div>';
+  wrap.appendChild(stats);
+  
+  const grid = document.createElement('div');
+  grid.className = 'patch-grid';
+  const holes = [];
+  for(let i=0; i<12; i++) {
+    const hole = document.createElement('div');
+    hole.className = 'patch-hole';
+    grid.appendChild(hole);
+    holes.push(hole);
+  }
+  wrap.appendChild(grid);
+  
+  let patched = 0, timeLeft = 25;
+  const needed = 15;
+  
+  const timer = setI(()=> {
+    if(!state.gameActive) { clearInterval(timer); return; }
+    timeLeft--;
+    const te = $('patchTime');
+    if(te) te.textContent = timeLeft;
+    if(timeLeft <= 5 && te) te.parentElement.classList.add('timer-low');
+    if(timeLeft <= 0) {
+      clearInterval(timer);
+      state.gameActive = false;
+      if(patched < needed) { loseLife(); showMsg('⏱ ВРЕМЯ ВЫШЛО', 1000); }
+      setTimeout(nextGame, 1200);
+    }
+  }, 1000);
+  
+  function spawnBug() {
+    if(!state.gameActive || patched >= needed) return;
+    const free = holes.filter(h => !h.classList.contains('active'));
+    if(free.length === 0) return;
+    const hole = free[Math.floor(Math.random()*free.length)];
+    const isBug = Math.random() < 0.7;
+    
+    hole.classList.add('active', isBug ? 'bug' : 'good');
+    hole.textContent = isBug ? '🐛' : '✅';
+    
+    const onClick = ()=> {
+      if(!state.gameActive || !hole.classList.contains('active')) return;
+      hole.removeEventListener('click', onClick);
+      if(isBug) {
+        hole.classList.remove('active','bug');
+        hole.classList.add('patched');
+        hole.textContent = '🔧';
+        patched++;
+        state.score += 10;
+        const pc = $('patchCount');
+        if(pc) pc.textContent = patched;
+        updateHUD();
+        setTimeout(()=> { hole.classList.remove('patched'); hole.textContent=''; }, 400);
+        if(patched >= needed) {
+          state.gameActive = false;
+          clearInterval(timer);
+          state.score += 30;
+          updateHUD();
+          showMsg('🔧 СИСТЕМА ПРОПАТЧЕНА', 1200);
+          setTimeout(nextGame, 1300);
+        }
+      } else {
+        hole.classList.remove('active','good');
+        hole.classList.add('missed');
+        hole.textContent = '';
+        if(loseLife()) return;
+        setTimeout(()=> hole.classList.remove('missed'), 500);
+      }
+    };
+    hole.addEventListener('click', onClick);
+    
+    setT(()=> {
+      if(hole.classList.contains('active') && (hole.classList.contains('bug') || hole.classList.contains('good'))) {
+        hole.removeEventListener('click', onClick);
+        hole.classList.remove('active','bug','good');
+        hole.textContent = '';
+      }
+    }, 2000);
+  }
+  
+  setI(()=> { if(state.gameActive) { spawnBug(); if(Math.random()<0.5) spawnBug(); } }, 700);
+  spawnBug();
+}
+
+/* ============ ИГРА 10: DATA LEAK ============ */
+function initDataLeak() {
+  state.gameActive = true;
+  const wrap = document.createElement('div');
+  wrap.className = 'leak-wrap';
+  area.appendChild(wrap);
+  
+  const info = document.createElement('div');
+  info.className = 'leak-info';
+  info.textContent = '> ЛОВИ 🔴 ПРИВАТНЫЕ // НЕ ТРОГАЙ 🟢';
+  wrap.appendChild(info);
+  
+  const pipes = document.createElement('div');
+  pipes.className = 'leak-pipes';
+  pipes.innerHTML = '<div class="leak-pipe danger">🔴 ПРИВАТНОЕ</div><div class="leak-pipe safe">🟢 ПУБЛИЧНОЕ</div>';
+  wrap.appendChild(pipes);
+  
+  const gameArea = document.createElement('div');
+  gameArea.className = 'leak-area';
+  wrap.appendChild(gameArea);
+  
+  const stats = document.createElement('div');
+  stats.className = 'leak-stats';
+  stats.innerHTML = '<div>ЗАЩИЩЕНО: <span id="leakCount">0</span>/12</div>';
+  wrap.appendChild(stats);
+  
+  const privateData = ['🔑 Пароль','💳 Номер карты','📱 CVV код','🆔 Паспорт','🏠 Адрес дома','📞 SMS-код','🔐 PIN-код','💰 Счёт банка'];
+  const publicData = ['😊 Имя','🌆 Город','🎂 Хобби','⭐ Никнейм','🎮 Любимая игра','🐱 Питомец'];
+  
+  let caught = 0;
+  const needed = 12;
+  let speed = 1;
+  const spawnRate = 1100;
+  
+  function spawnItem() {
+    if(!state.gameActive || caught >= needed) return;
+    const isPrivate = Math.random() < 0.6;
+    const data = isPrivate ? privateData[Math.floor(Math.random()*privateData.length)] : publicData[Math.floor(Math.random()*publicData.length)];
+    const el = document.createElement('div');
+    el.className = 'leak-item ' + (isPrivate ? 'private' : 'public');
+    el.textContent = data;
+    const maxX = gameArea.offsetWidth - 70;
+    el.style.left = Math.random() * Math.max(0, maxX) + 'px';
+    el.style.top = '-50px';
+    gameArea.appendChild(el);
+    
+    let y = -50;
+    let done = false;
+    el.addEventListener('click', ()=> {
+      if(!state.gameActive || done) return;
+      done = true;
+      if(isPrivate) {
+        caught++;
+        state.score += 10;
+        el.style.background = 'rgba(0,255,100,0.4)';
+        el.style.borderColor = '#00ff66';
+        const lc = $('leakCount');
+        if(lc) lc.textContent = caught;
+        updateHUD();
+        clearInterval(anim);
+        setTimeout(()=> el.remove(), 200);
+        if(caught >= needed) {
+          state.gameActive = false;
+          state.score += 30;
+          updateHUD();
+          showMsg('💧 ДАННЫЕ ЗАЩИЩЕНЫ', 1200);
+          setTimeout(nextGame, 1300);
+        }
+      } else {
+        el.style.background = 'rgba(255,0,85,0.4)';
+        clearInterval(anim);
+        if(loseLife()) { el.remove(); return; }
+        setTimeout(()=> el.remove(), 200);
+      }
+    });
+    
+    const anim = setI(()=> {
+      if(!state.gameActive || done) { clearInterval(anim); return; }
+      y += speed;
+      el.style.top = y + 'px';
+      if(y > gameArea.offsetHeight) {
+        clearInterval(anim);
+        if(!done) {
+          done = true;
+          el.remove();
+          if(isPrivate) { if(loseLife()) return; }
+        }
+      }
+    }, 16);
+  }
+  
+  setI(()=> {
+    if(state.gameActive && caught < needed) {
+      spawnItem();
+      speed = Math.min(2.2, speed + 0.04);
+    }
+  }, spawnRate);
+  spawnItem();
+}
+
+/* ============ ИНИЦИАЛИЗАЦИЯ ============ */
+$('startBtn').addEventListener('click', startGame);
+$('restartBtn').addEventListener('click', startGame);
+$('skipTutBtn').addEventListener('click', beginLevel);
+$('skipAdviceBtn').addEventListener('click', skipAdvice);
+$('copyBtn').addEventListener('click', copyPrizeLink);
+
 </script>
 </body>
 </html>
