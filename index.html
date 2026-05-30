@@ -3,53 +3,424 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>CyberGuard</title>
+<title>CYBERGUARD // v2.0</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
-html, body { height: 100%; overflow: hidden; font-family: 'Segoe UI', Tahoma, sans-serif; background: #0a0e27; color: #e0e6ff; touch-action: none; }
-#game { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
-.screen { position: absolute; inset: 0; display: none; flex-direction: column; padding: 15px; background: linear-gradient(135deg, #0a0e27 0%, #1a1f4e 100%); }
+html, body { height: 100%; overflow: hidden; font-family: 'Share Tech Mono', monospace; background: #000; color: #00ffcc; touch-action: none; }
+
+#game { 
+  position: relative; width: 100vw; height: 100vh; overflow: hidden;
+  background: 
+    linear-gradient(rgba(0,255,204,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,204,0.03) 1px, transparent 1px),
+    radial-gradient(ellipse at center, #001a1a 0%, #000 100%);
+  background-size: 30px 30px, 30px 30px, 100% 100%;
+}
+
+#game::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 1000;
+  background: linear-gradient(transparent 50%, rgba(0,0,0,0.15) 50%);
+  background-size: 100% 4px;
+}
+
+#game::after {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.4) 100%);
+}
+
+.screen { 
+  position: absolute; inset: 0; display: none; flex-direction: column; padding: 15px;
+  z-index: 10;
+}
 .screen.active { display: flex; }
-h1 { font-size: 28px; text-align: center; margin-bottom: 10px; color: #4fc3f7; text-shadow: 0 0 10px #4fc3f7; }
-p { font-size: 15px; line-height: 1.5; text-align: center; margin-bottom: 10px; }
-.btn { background: linear-gradient(135deg, #4fc3f7, #2196f3); color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 10px; cursor: pointer; margin: 10px auto; display: block; box-shadow: 0 4px 15px rgba(33,150,243,0.4); font-weight: bold; min-width: 200px; }
-.btn:active { transform: scale(0.96); }
-.hud { display: flex; justify-content: space-between; padding: 10px 15px; background: rgba(0,0,0,0.3); border-radius: 10px; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
-.hud div { color: #4fc3f7; }
+
+h1 { 
+  font-family: 'Orbitron', sans-serif; font-size: 32px; text-align: center; margin-bottom: 10px;
+  color: #00ffcc; text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc, 0 0 30px #00ffcc;
+  letter-spacing: 4px; font-weight: 900;
+  animation: flicker 3s infinite;
+}
+
+h2 {
+  font-family: 'Orbitron', sans-serif; font-size: 20px; text-align: center; margin-bottom: 15px;
+  color: #00ffcc; text-shadow: 0 0 8px #00ffcc; letter-spacing: 2px;
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.3; }
+  94% { opacity: 1; }
+  96% { opacity: 0.5; }
+  97% { opacity: 1; }
+}
+
+p { 
+  font-size: 15px; line-height: 1.6; text-align: center; margin-bottom: 10px;
+  color: #88ffee;
+}
+
+.btn { 
+  background: transparent; color: #00ffcc; border: 2px solid #00ffcc;
+  padding: 15px 30px; font-size: 16px; font-family: 'Orbitron', sans-serif; font-weight: 700;
+  border-radius: 0; cursor: pointer; margin: 10px auto; display: block;
+  min-width: 220px; letter-spacing: 3px; position: relative;
+  box-shadow: 0 0 15px rgba(0,255,204,0.5), inset 0 0 15px rgba(0,255,204,0.1);
+  text-shadow: 0 0 8px #00ffcc;
+  transition: all 0.2s;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+.btn:active { 
+  background: #00ffcc; color: #000; text-shadow: none;
+  box-shadow: 0 0 30px #00ffcc;
+}
+.btn::before {
+  content: '> '; opacity: 0.7;
+}
+
+.hud { 
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 15px; 
+  background: rgba(0,255,204,0.05);
+  border: 1px solid #00ffcc;
+  margin-bottom: 10px; font-size: 12px; font-weight: bold;
+  font-family: 'Share Tech Mono', monospace;
+  box-shadow: 0 0 10px rgba(0,255,204,0.3), inset 0 0 10px rgba(0,255,204,0.05);
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+.hud div { color: #00ffcc; text-shadow: 0 0 5px #00ffcc; letter-spacing: 1px; }
+.hud .label { color: #00ffcc99; font-size: 10px; }
+
 .center-content { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-#gameArea { flex: 1; position: relative; background: rgba(0,0,0,0.3); border-radius: 15px; overflow: hidden; border: 2px solid #4fc3f7; }
-.email { position: absolute; width: 90%; left: 5%; background: #1e2a5e; padding: 12px; border-radius: 8px; border-left: 4px solid #4fc3f7; cursor: pointer; }
-.email.phish { border-left-color: #f44336; }
-.email .from { font-size: 13px; color: #aab; margin-bottom: 4px; }
-.email .subj { font-size: 15px; font-weight: bold; }
-.email .preview { font-size: 12px; color: #99a; margin-top: 4px; }
-.swipe-hint { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 12px; color: #88a; z-index: 5; }
-.packet { position: absolute; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 28px; border-radius: 50%; box-shadow: 0 0 15px currentColor; }
-.packet.virus { background: #5a1a1a; color: #ff5252; }
-.packet.safe { background: #1a3a5a; color: #4fc3f7; }
-#shield { position: absolute; bottom: 30px; width: 70px; height: 70px; background: linear-gradient(135deg, #4fc3f7, #2196f3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 0 20px #4fc3f7; margin-left: -35px; }
-.char { position: absolute; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; border-radius: 8px; color: white; }
-.char.good { background: #2e7d32; }
-.char.bad { background: #c62828; }
-#basket { position: absolute; bottom: 20px; width: 90px; height: 30px; background: linear-gradient(135deg, #4fc3f7, #2196f3); border-radius: 8px; margin-left: -45px; box-shadow: 0 0 15px #4fc3f7; }
-#passDisplay { position: absolute; top: 10px; left: 10px; right: 10px; background: rgba(0,0,0,0.5); padding: 8px; border-radius: 6px; font-family: monospace; font-size: 14px; min-height: 30px; word-break: break-all; z-index: 5; }
+
+#gameArea { 
+  flex: 1; position: relative;
+  background: rgba(0,30,30,0.4);
+  border: 2px solid #00ffcc;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0,255,204,0.4), inset 0 0 20px rgba(0,255,204,0.1);
+  clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+}
+
+/* === EMAIL === */
+.email { 
+  position: absolute; width: 92%; left: 4%;
+  background: linear-gradient(135deg, rgba(0,40,40,0.95), rgba(0,20,20,0.95));
+  padding: 12px; border: 1px solid #00ffcc;
+  border-left: 4px solid #00ffcc;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0,255,204,0.3);
+  font-family: 'Share Tech Mono', monospace;
+}
+.email.phish { 
+  border-color: #ff0055; border-left-color: #ff0055;
+  box-shadow: 0 0 15px rgba(255,0,85,0.4);
+  background: linear-gradient(135deg, rgba(40,0,15,0.95), rgba(20,0,5,0.95));
+}
+.email .from { font-size: 12px; color: #88ffee; margin-bottom: 4px; }
+.email.phish .from { color: #ff88aa; }
+.email .subj { font-size: 14px; font-weight: bold; color: #00ffcc; }
+.email.phish .subj { color: #ff5577; }
+.email .preview { font-size: 11px; color: #66bbaa; margin-top: 4px; }
+
+.swipe-hint { 
+  position: absolute; bottom: 10px; width: 100%; text-align: center; 
+  font-size: 11px; color: #00ffcc88; z-index: 5; letter-spacing: 1px;
+}
+
+/* === FIREWALL === */
+.packet { 
+  position: absolute; width: 50px; height: 50px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; border-radius: 50%;
+}
+.packet.virus { 
+  background: radial-gradient(circle, #4a0015, #1a0008);
+  color: #ff0055;
+  box-shadow: 0 0 20px #ff0055, inset 0 0 10px #ff0055;
+  border: 2px solid #ff0055;
+}
+.packet.safe { 
+  background: radial-gradient(circle, #003a3a, #001515);
+  color: #00ffcc;
+  box-shadow: 0 0 20px #00ffcc, inset 0 0 10px #00ffcc;
+  border: 2px solid #00ffcc;
+}
+
+#shield { 
+  position: absolute; bottom: 30px; width: 80px; height: 80px;
+  background: radial-gradient(circle, rgba(0,255,204,0.3), rgba(0,255,204,0.1));
+  border: 3px solid #00ffcc;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px;
+  box-shadow: 0 0 30px #00ffcc, inset 0 0 20px rgba(0,255,204,0.3);
+  margin-left: -40px;
+  animation: shieldPulse 2s infinite;
+}
+@keyframes shieldPulse {
+  0%, 100% { box-shadow: 0 0 30px #00ffcc, inset 0 0 20px rgba(0,255,204,0.3); }
+  50% { box-shadow: 0 0 50px #00ffcc, inset 0 0 30px rgba(0,255,204,0.5); }
+}
+
+/* === PASSWORD === */
+.char { 
+  position: absolute; width: 45px; height: 45px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: bold; color: white;
+  font-family: 'Orbitron', sans-serif;
+  clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+}
+.char.good { 
+  background: linear-gradient(135deg, #00ffcc, #00aa88);
+  color: #001a1a;
+  box-shadow: 0 0 15px #00ffcc;
+}
+.char.bad { 
+  background: linear-gradient(135deg, #ff0055, #aa0033);
+  color: #fff;
+  box-shadow: 0 0 15px #ff0055;
+}
+
+#basket { 
+  position: absolute; bottom: 20px; width: 100px; height: 35px;
+  background: linear-gradient(135deg, #00ffcc, #00aa88);
+  margin-left: -50px;
+  box-shadow: 0 0 20px #00ffcc;
+  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 100%, 0 100%);
+}
+
+#passDisplay { 
+  position: absolute; top: 10px; left: 10px; right: 10px;
+  background: rgba(0,0,0,0.8);
+  border: 1px solid #00ffcc;
+  padding: 8px; font-family: 'Share Tech Mono', monospace; font-size: 13px;
+  min-height: 30px; word-break: break-all; z-index: 5;
+  color: #00ffcc; text-shadow: 0 0 5px #00ffcc;
+  box-shadow: 0 0 10px rgba(0,255,204,0.3), inset 0 0 5px rgba(0,255,204,0.1);
+}
+
+/* === CAPTCHA === */
 .captcha-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 15px; }
-.captcha-cell { aspect-ratio: 1; background: #1e2a5e; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 36px; cursor: pointer; border: 2px solid transparent; }
-.captcha-cell.selected { border-color: #4fc3f7; background: #2a3a7e; }
-.captcha-task { text-align: center; padding: 15px; font-size: 16px; font-weight: bold; color: #4fc3f7; }
-.av-grid { position: absolute; left: 10px; right: 10px; top: 35px; bottom: 35px; display: grid; gap: 6px; }
-.av-cell { background: #1e2a5e; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; }
-.av-cell.selected { background: #4fc3f7; box-shadow: 0 0 15px #4fc3f7; }
-.av-cell.matched { opacity: 0.2; }
-#message { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.9); padding: 20px 30px; border-radius: 15px; font-size: 20px; font-weight: bold; z-index: 100; display: none; border: 2px solid #4fc3f7; text-align: center; }
-.progress { display: flex; gap: 4px; margin-bottom: 10px; }
-.progress div { flex: 1; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; }
-.progress div.done { background: #4caf50; }
-.progress div.current { background: #4fc3f7; }
-.lives { color: #ff5252 !important; }
-@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.5} }
-.timer-low { animation: pulse 0.5s infinite; color: #ff5252 !important; }
-.tip { background: rgba(79,195,247,0.1); border-left: 3px solid #4fc3f7; padding: 10px; margin: 10px 0; border-radius: 5px; font-size: 13px; text-align: left; }
+.captcha-cell { 
+  aspect-ratio: 1;
+  background: rgba(0,40,40,0.8);
+  border: 2px solid #00ffcc66;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: inset 0 0 10px rgba(0,255,204,0.1);
+}
+.captcha-cell.selected { 
+  border-color: #00ffcc;
+  background: rgba(0,255,204,0.2);
+  box-shadow: 0 0 20px #00ffcc, inset 0 0 15px rgba(0,255,204,0.3);
+  transform: scale(0.95);
+}
+.captcha-task { 
+  text-align: center; padding: 15px; font-size: 15px;
+  font-weight: bold; color: #00ffcc;
+  text-shadow: 0 0 8px #00ffcc;
+  letter-spacing: 1px;
+  font-family: 'Orbitron', sans-serif;
+}
+
+/* === ANTIVIRUS === */
+.av-grid { 
+  position: absolute; left: 10px; right: 10px; top: 35px; bottom: 35px;
+  display: grid; gap: 6px;
+}
+.av-cell { 
+  background: rgba(0,40,40,0.8);
+  border: 2px solid #00ffcc66;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; cursor: pointer;
+  transition: all 0.2s;
+}
+.av-cell.selected { 
+  background: rgba(0,255,204,0.3);
+  border-color: #00ffcc;
+  box-shadow: 0 0 20px #00ffcc, inset 0 0 15px rgba(0,255,204,0.4);
+  transform: scale(0.95);
+}
+.av-cell.matched { 
+  opacity: 0.15;
+  border-color: #00ffcc22;
+}
+
+/* === MESSAGE === */
+#message { 
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.95);
+  border: 2px solid #00ffcc;
+  padding: 20px 30px;
+  font-size: 18px; font-weight: bold; z-index: 200;
+  display: none; text-align: center;
+  font-family: 'Orbitron', sans-serif;
+  color: #00ffcc; text-shadow: 0 0 10px #00ffcc;
+  box-shadow: 0 0 30px #00ffcc, inset 0 0 20px rgba(0,255,204,0.1);
+  letter-spacing: 2px;
+  clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+}
+
+/* === PROGRESS === */
+.progress { display: flex; gap: 3px; margin-bottom: 10px; }
+.progress div { 
+  flex: 1; height: 5px;
+  background: rgba(0,255,204,0.15);
+  border: 1px solid rgba(0,255,204,0.3);
+}
+.progress div.done { 
+  background: #00ffcc;
+  box-shadow: 0 0 8px #00ffcc;
+}
+.progress div.current { 
+  background: #00ffcc;
+  box-shadow: 0 0 12px #00ffcc;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.lives { color: #ff0055 !important; text-shadow: 0 0 8px #ff0055 !important; }
+
+.timer-low { animation: pulseDanger 0.5s infinite; color: #ff0055 !important; text-shadow: 0 0 10px #ff0055 !important; }
+@keyframes pulseDanger {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.tip { 
+  background: rgba(0,255,204,0.08);
+  border-left: 3px solid #00ffcc;
+  padding: 12px; margin: 10px 0;
+  font-size: 13px; text-align: left;
+  color: #88ffee;
+  line-height: 1.8;
+  font-family: 'Share Tech Mono', monospace;
+  box-shadow: inset 0 0 10px rgba(0,255,204,0.05);
+}
+
+/* === TUTORIAL SCREEN === */
+.tutorial-content {
+  flex: 1; display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 20px;
+}
+
+.tutorial-icon {
+  font-size: 80px; margin-bottom: 20px;
+  filter: drop-shadow(0 0 20px #00ffcc);
+  animation: float 2s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.tutorial-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 24px; font-weight: 900;
+  color: #00ffcc; text-shadow: 0 0 15px #00ffcc;
+  letter-spacing: 3px; margin-bottom: 8px; text-align: center;
+}
+
+.tutorial-subtitle {
+  font-size: 13px; color: #00ffcc88;
+  letter-spacing: 4px; margin-bottom: 20px;
+}
+
+.tutorial-desc {
+  background: rgba(0,255,204,0.08);
+  border: 1px solid #00ffcc;
+  padding: 20px;
+  font-size: 14px; line-height: 1.8;
+  color: #aaffee;
+  max-width: 90%; text-align: left;
+  box-shadow: inset 0 0 15px rgba(0,255,204,0.05);
+  margin-bottom: 25px;
+}
+.tutorial-desc strong { color: #00ffcc; text-shadow: 0 0 5px #00ffcc; }
+
+.tutorial-countdown {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 60px; font-weight: 900;
+  color: #00ffcc; text-shadow: 0 0 30px #00ffcc;
+  margin-top: 10px;
+  animation: countPulse 1s infinite;
+}
+@keyframes countPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.tutorial-bar {
+  width: 80%; height: 6px;
+  background: rgba(0,255,204,0.15);
+  border: 1px solid #00ffcc;
+  margin-top: 15px;
+  overflow: hidden;
+}
+.tutorial-bar-fill {
+  height: 100%; background: #00ffcc;
+  box-shadow: 0 0 10px #00ffcc;
+  width: 0%; transition: width 1s linear;
+}
+
+.title-glitch {
+  position: relative;
+}
+.title-glitch::before, .title-glitch::after {
+  content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%;
+}
+.title-glitch::before {
+  animation: glitch1 2s infinite;
+  color: #ff0055; z-index: -1;
+}
+.title-glitch::after {
+  animation: glitch2 3s infinite;
+  color: #0088ff; z-index: -2;
+}
+@keyframes glitch1 {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+}
+@keyframes glitch2 {
+  0%, 100% { transform: translate(0); }
+  25% { transform: translate(2px, -2px); }
+  50% { transform: translate(-2px, 2px); }
+  75% { transform: translate(-2px, -2px); }
+}
+
+.level-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(0,255,204,0.15);
+  border: 1px solid #00ffcc;
+  color: #00ffcc;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.terminal-text {
+  font-family: 'Share Tech Mono', monospace;
+  color: #00ffcc88;
+  font-size: 12px;
+  margin-top: 10px;
+  letter-spacing: 2px;
+}
+
+.terminal-text::before { content: '> '; }
 </style>
 </head>
 <body>
@@ -57,29 +428,52 @@ p { font-size: 15px; line-height: 1.5; text-align: center; margin-bottom: 10px; 
 
 <div class="screen active" id="menuScreen">
   <div class="center-content">
-    <h1>🛡️ CyberGuard</h1>
-    <p>5 мини-игр о безопасности в интернете</p>
-    <div class="tip">📧 Распознавай фишинг<br>🔥 Блокируй вирусы<br>🔑 Создавай пароли<br>✅ Решай капчи<br>🦠 Удаляй угрозы</div>
-    <button class="btn" id="startBtn">▶ НАЧАТЬ</button>
+    <h1 class="title-glitch" data-text="CYBERGUARD">CYBERGUARD</h1>
+    <div class="terminal-text">SYSTEM v2.0 // INITIALIZING...</div>
+    <p style="margin-top:25px;">10 уровней кибербезопасности</p>
+    <div class="tip">
+      <strong>&gt; БРИФИНГ:</strong><br>
+      📧 Распознавай фишинговые письма<br>
+      🔥 Блокируй вирусы файрволом<br>
+      🔑 Создавай надёжные пароли<br>
+      ✅ Решай защитные капчи<br>
+      🦠 Удаляй угрозы с системы
+    </div>
+    <p style="font-size:12px;color:#00ffcc88;">3 жизни на все 10 уровней</p>
+    <button class="btn" id="startBtn">ВОЙТИ В СИСТЕМУ</button>
+  </div>
+</div>
+
+<div class="screen" id="tutorialScreen">
+  <div class="tutorial-content">
+    <div class="level-badge" id="tutLevel">УРОВЕНЬ 01/10</div>
+    <div class="tutorial-icon" id="tutIcon">📧</div>
+    <div class="tutorial-title" id="tutTitle">ФИШИНГ</div>
+    <div class="tutorial-subtitle">// ПОДГОТОВКА</div>
+    <div class="tutorial-desc" id="tutDesc"></div>
+    <div class="tutorial-countdown" id="tutCount">5</div>
+    <div class="tutorial-bar"><div class="tutorial-bar-fill" id="tutBar"></div></div>
   </div>
 </div>
 
 <div class="screen" id="gameScreen">
   <div class="progress" id="progress"></div>
   <div class="hud">
-    <div id="gameTitle">Игра 1/5</div>
-    <div id="score">Очки: 0</div>
-    <div id="lives" class="lives">❤❤❤</div>
+    <div><span class="label">LVL</span> <span id="gameTitle">01/10</span></div>
+    <div><span class="label">SCORE</span> <span id="score">0</span></div>
+    <div><span class="label">HP</span> <span id="lives" class="lives">❤❤❤</span></div>
   </div>
   <div id="gameArea"></div>
 </div>
 
 <div class="screen" id="endScreen">
   <div class="center-content">
-    <h1 id="endTitle">🎉 Победа!</h1>
-    <p id="endText">Ты настоящий киберзащитник!</p>
-    <p style="font-size:24px;color:#4fc3f7;margin:20px 0;" id="endScore">Очки: 0</p>
-    <button class="btn" id="restartBtn">🔄 ЕЩЁ РАЗ</button>
+    <h1 id="endTitle" class="title-glitch" data-text="VICTORY">VICTORY</h1>
+    <div class="terminal-text" id="endStatus">SYSTEM SECURED</div>
+    <p id="endText" style="margin-top:20px;">Ты прошёл все испытания!</p>
+    <div style="font-family:'Orbitron',sans-serif;font-size:42px;color:#00ffcc;margin:25px 0;text-shadow:0 0 20px #00ffcc;" id="endScore">0</div>
+    <div class="terminal-text">// FINAL SCORE</div>
+    <button class="btn" id="restartBtn" style="margin-top:30px;">ПЕРЕЗАПУСК</button>
   </div>
 </div>
 
@@ -90,9 +484,54 @@ p { font-size: 15px; line-height: 1.5; text-align: center; margin-bottom: 10px; 
 const $ = id => document.getElementById(id);
 let area;
 const state = { current: 0, score: 0, lives: 3, gameActive: false };
-const games = ['phishing','firewall','password','captcha','antivirus'];
-const titles = ['📧 Фишинг','🔥 Файрвол','🔑 Пароль','✅ Капча','🦠 Антивирус'];
 let activeTimers = [];
+
+// 10 уровней: каждая механика 2 раза с усложнением
+const levels = [
+  { game: 'phishing', difficulty: 1 },
+  { game: 'firewall', difficulty: 1 },
+  { game: 'password', difficulty: 1 },
+  { game: 'captcha', difficulty: 1 },
+  { game: 'antivirus', difficulty: 1 },
+  { game: 'phishing', difficulty: 2 },
+  { game: 'firewall', difficulty: 2 },
+  { game: 'password', difficulty: 2 },
+  { game: 'captcha', difficulty: 2 },
+  { game: 'antivirus', difficulty: 2 },
+];
+
+const gameInfo = {
+  phishing: {
+    icon: '📧',
+    title: 'ФИШИНГ',
+    desc1: '<strong>ЦЕЛЬ:</strong> определи опасные письма<br><br><strong>УПРАВЛЕНИЕ:</strong><br>👆 <strong>ТАП</strong> по письму = это <strong>ФИШИНГ</strong> (удалить)<br>👉 <strong>СВАЙП</strong> в сторону = письмо <strong>БЕЗОПАСНО</strong><br><br><strong>ПОДСКАЗКА:</strong> ищи опечатки в адресе (paypa<u>1</u>.com), угрозы и обещания денег',
+    desc2: '<strong>УРОВЕНЬ 2:</strong> писем больше, падают быстрее, фишинг изощрённее. Будь внимателен к деталям!'
+  },
+  firewall: {
+    icon: '🔥',
+    title: 'ФАЙРВОЛ',
+    desc1: '<strong>ЦЕЛЬ:</strong> защити систему от вирусов<br><br><strong>УПРАВЛЕНИЕ:</strong><br>👆 <strong>ВОДИ ПАЛЬЦЕМ</strong> по экрану — щит следует за тобой<br><br><strong>ПРАВИЛА:</strong><br>🦠 <strong>Вирусы</strong> — блокируй щитом<br>📦 <strong>Пакеты данных</strong> — пропускай вниз',
+    desc2: '<strong>УРОВЕНЬ 2:</strong> вирусов больше, скорость выше, нужно заблокировать 12 угроз!'
+  },
+  password: {
+    icon: '🔑',
+    title: 'ПАРОЛЬ',
+    desc1: '<strong>ЦЕЛЬ:</strong> собери надёжный пароль<br><br><strong>УПРАВЛЕНИЕ:</strong><br>👆 <strong>ВОДИ ПАЛЬЦЕМ</strong> — корзина движется за тобой<br><br><strong>ЛОВИ:</strong> 🟢 буквы A-Z, цифры 0-9, символы !@#<br><strong>ИЗБЕГАЙ:</strong> 🔴 кириллицы и слабых символов',
+    desc2: '<strong>УРОВЕНЬ 2:</strong> пароль из 14 символов, всё падает быстрее, больше ловушек!'
+  },
+  captcha: {
+    icon: '✅',
+    title: 'КАПЧА',
+    desc1: '<strong>ЦЕЛЬ:</strong> подтверди что ты не робот<br><br><strong>УПРАВЛЕНИЕ:</strong><br>👆 <strong>ТАП</strong> по нужным изображениям<br>✓ нажми <strong>ПРОВЕРИТЬ</strong><br><br><strong>ВНИМАНИЕ:</strong> ограничение по времени! Выбирай ВСЕ нужные клетки',
+    desc2: '<strong>УРОВЕНЬ 2:</strong> сетка 4x4, меньше времени, нужно решить 4 капчи подряд!'
+  },
+  antivirus: {
+    icon: '🦠',
+    title: 'АНТИВИРУС',
+    desc1: '<strong>ЦЕЛЬ:</strong> уничтожь все угрозы<br><br><strong>УПРАВЛЕНИЕ:</strong><br>👆 <strong>ТАП</strong> на угрозу, потом на <strong>ПАРНУЮ</strong> такую же<br><br><strong>ПРАВИЛА:</strong> соединяй пары одинаковых угроз. У тебя ограничено время!',
+    desc2: '<strong>УРОВЕНЬ 2:</strong> поле 5x4, больше типов угроз, меньше времени!'
+  }
+};
 
 function clearTimers() {
   activeTimers.forEach(t => { clearInterval(t); clearTimeout(t); });
@@ -110,12 +549,12 @@ function showMsg(text, dur) {
 }
 
 function updateHUD() {
-  $('score').textContent = 'Очки: ' + state.score;
+  $('score').textContent = String(state.score).padStart(4, '0');
   $('lives').textContent = '❤'.repeat(Math.max(0,state.lives)) + '🖤'.repeat(Math.max(0,3-state.lives));
-  $('gameTitle').textContent = 'Игра ' + (state.current+1) + '/5';
+  $('gameTitle').textContent = String(state.current+1).padStart(2,'0') + '/10';
   const prog = $('progress');
   prog.innerHTML = '';
-  for(let i=0;i<5;i++){
+  for(let i=0;i<10;i++){
     const d = document.createElement('div');
     if(i<state.current) d.className='done';
     else if(i===state.current) d.className='current';
@@ -126,44 +565,76 @@ function updateHUD() {
 function startGame() {
   $('menuScreen').classList.remove('active');
   $('endScreen').classList.remove('active');
-  $('gameScreen').classList.add('active');
   state.current = 0;
   state.score = 0;
   state.lives = 3;
-  area = $('gameArea');
-  loadGame();
+  showTutorial();
 }
 
-function loadGame() {
+function showTutorial() {
+  if(state.current >= 10) return endGame(true);
+  if(state.lives <= 0) return endGame(false);
+  
+  $('gameScreen').classList.remove('active');
+  $('tutorialScreen').classList.add('active');
+  
+  const lvl = levels[state.current];
+  const info = gameInfo[lvl.game];
+  
+  $('tutLevel').textContent = 'УРОВЕНЬ ' + String(state.current+1).padStart(2,'0') + '/10';
+  $('tutIcon').textContent = info.icon;
+  $('tutTitle').textContent = info.title;
+  $('tutDesc').innerHTML = lvl.difficulty === 1 ? info.desc1 : info.desc2;
+  
+  let count = 5;
+  $('tutCount').textContent = count;
+  $('tutBar').style.width = '0%';
+  setT(()=> $('tutBar').style.width = '100%', 50);
+  
+  const tutTimer = setI(()=> {
+    count--;
+    $('tutCount').textContent = count;
+    if(count <= 0) {
+      clearInterval(tutTimer);
+      $('tutorialScreen').classList.remove('active');
+      $('gameScreen').classList.add('active');
+      area = $('gameArea');
+      area.innerHTML = '';
+      updateHUD();
+      startLevel();
+    }
+  }, 1000);
+}
+
+function startLevel() {
   clearTimers();
   area.innerHTML = '';
-  updateHUD();
-  if(state.lives<=0) return endGame(false);
-  if(state.current>=5) return endGame(true);
-  showMsg(titles[state.current], 1200);
-  setTimeout(()=> {
-    const g = games[state.current];
-    if(g==='phishing') initPhishing();
-    else if(g==='firewall') initFirewall();
-    else if(g==='password') initPassword();
-    else if(g==='captcha') initCaptcha();
-    else if(g==='antivirus') initAntivirus();
-  }, 1300);
+  const lvl = levels[state.current];
+  const g = lvl.game;
+  const d = lvl.difficulty;
+  if(g==='phishing') initPhishing(d);
+  else if(g==='firewall') initFirewall(d);
+  else if(g==='password') initPassword(d);
+  else if(g==='captcha') initCaptcha(d);
+  else if(g==='antivirus') initAntivirus(d);
 }
 
 function nextGame() {
   state.current++;
-  loadGame();
+  showTutorial();
 }
 
 function endGame(win) {
   state.gameActive = false;
   clearTimers();
   $('gameScreen').classList.remove('active');
+  $('tutorialScreen').classList.remove('active');
   $('endScreen').classList.add('active');
-  $('endTitle').textContent = win ? '🎉 Победа!' : '💀 Поражение';
-  $('endText').textContent = win ? 'Ты прошёл все испытания!' : 'Атаки прорвали защиту!';
-  $('endScore').textContent = 'Очки: ' + state.score;
+  $('endTitle').textContent = win ? 'VICTORY' : 'GAME OVER';
+  $('endTitle').setAttribute('data-text', win ? 'VICTORY' : 'GAME OVER');
+  $('endStatus').textContent = win ? 'SYSTEM SECURED' : 'SYSTEM BREACHED';
+  $('endText').textContent = win ? 'Ты прошёл все 10 уровней!' : 'Атаки прорвали защиту...';
+  $('endScore').textContent = String(state.score).padStart(4,'0');
 }
 
 function loseLife() {
@@ -177,28 +648,36 @@ function loseLife() {
   return false;
 }
 
-/* ИГРА 1: PHISHING */
-function initPhishing() {
+/* ============ ИГРА 1: PHISHING ============ */
+function initPhishing(diff) {
   state.gameActive = true;
   const phish = [
-    {from:'support@paypa1.com', subj:'Срочно! Аккаунт заблокирован', preview:'Перейдите по ссылке'},
-    {from:'admin@bank-secure.ru', subj:'ВЫИГРАЛИ 1000000р!', preview:'Введите данные карты'},
+    {from:'support@paypa1.com', subj:'Срочно! Аккаунт заблокирован', preview:'Перейдите по ссылке немедленно'},
+    {from:'admin@bank-secure.ru', subj:'ВЫИГРАЛИ 1000000₽!', preview:'Введите данные карты'},
     {from:'noreply@vk-help.xyz', subj:'Пароль истекает', preview:'Срочно подтвердите'},
     {from:'apple-id@iclud.com', subj:'Подозрительный вход', preview:'Войдите немедленно'},
-    {from:'tax@nalogs.ru', subj:'Возврат налога 50000р', preview:'Введите реквизиты'},
+    {from:'tax@nalogs.ru', subj:'Возврат налога 50000₽', preview:'Введите реквизиты'},
+    {from:'security@gooogle.com', subj:'Взлом аккаунта', preview:'Перейдите по ссылке'},
+    {from:'admin@sberbank-online.xyz', subj:'Заблокирована карта', preview:'Разблокируйте срочно'},
+    {from:'no-reply@telegrarn.org', subj:'Получите Premium бесплатно', preview:'Только сегодня'},
   ];
   const safe = [
-    {from:'noreply@github.com', subj:'Pull request обновлён', preview:'Изменения в репо'},
-    {from:'news@habr.com', subj:'Подборка статей', preview:'Лучшие материалы'},
+    {from:'noreply@github.com', subj:'Pull request обновлён', preview:'Изменения в репозитории'},
+    {from:'news@habr.com', subj:'Подборка статей недели', preview:'Лучшие материалы'},
     {from:'info@steampowered.com', subj:'Летняя распродажа', preview:'Скидки до 90%'},
-    {from:'no-reply@youtube.com', subj:'Новое видео', preview:'Премьера состоится'},
+    {from:'no-reply@youtube.com', subj:'Новое видео от канала', preview:'Премьера состоится'},
+    {from:'team@notion.so', subj:'Обновление workspace', preview:'Новые функции'},
+    {from:'support@spotify.com', subj:'Ваш плейлист недели', preview:'Подборка треков'},
   ];
   
-  let processed = 0, needed = 6;
+  let processed = 0;
+  const needed = diff === 1 ? 6 : 8;
+  const speed = diff === 1 ? 1.3 : 1.9;
+  const spawnRate = diff === 1 ? 2800 : 2000;
   
   const hint = document.createElement('div');
   hint.className = 'swipe-hint';
-  hint.textContent = '👆 Тап = удалить фишинг | ⬅➡ свайп = безопасно';
+  hint.textContent = '> ТАП = ФИШИНГ // СВАЙП = БЕЗОПАСНО';
   area.appendChild(hint);
   
   function spawnEmail() {
@@ -207,7 +686,7 @@ function initPhishing() {
     const data = isPhish ? phish[Math.floor(Math.random()*phish.length)] : safe[Math.floor(Math.random()*safe.length)];
     const el = document.createElement('div');
     el.className = 'email' + (isPhish?' phish':'');
-    el.innerHTML = '<div class="from">'+data.from+'</div><div class="subj">'+data.subj+'</div><div class="preview">'+data.preview+'</div>';
+    el.innerHTML = '<div class="from">FROM: '+data.from+'</div><div class="subj">'+data.subj+'</div><div class="preview">'+data.preview+'</div>';
     el.style.top = '-100px';
     area.appendChild(el);
     
@@ -237,22 +716,24 @@ function initPhishing() {
       processed++;
       if(markedAsPhish === isPhish) {
         state.score += 10;
-        el.style.background = '#2e7d32';
+        el.style.background = 'linear-gradient(135deg, rgba(0,255,100,0.4), rgba(0,150,80,0.4))';
+        el.style.borderColor = '#00ff66';
       } else {
-        el.style.background = '#c62828';
+        el.style.background = 'linear-gradient(135deg, rgba(255,0,85,0.5), rgba(150,0,50,0.5))';
+        el.style.borderColor = '#ff0055';
         if(loseLife()) return;
       }
       updateHUD();
-      setTimeout(()=> el.remove(), 200);
+      setTimeout(()=> el.remove(), 300);
       if(processed >= needed) {
         state.gameActive = false;
-        setTimeout(nextGame, 600);
+        setTimeout(nextGame, 700);
       }
     }
     
     const anim = setI(()=> {
       if(!state.gameActive || el._done) { clearInterval(anim); return; }
-      y += 1.3;
+      y += speed;
       el.style.top = y + 'px';
       if(y > area.offsetHeight - 80) {
         clearInterval(anim);
@@ -261,27 +742,27 @@ function initPhishing() {
           el.remove();
           processed++;
           if(isPhish) { if(loseLife()) return; }
-          if(processed >= needed) { state.gameActive = false; setTimeout(nextGame, 600); }
+          if(processed >= needed) { state.gameActive = false; setTimeout(nextGame, 700); }
         }
       }
     }, 16);
   }
   
-  setI(()=> { if(state.gameActive && processed < needed) spawnEmail(); }, 2800);
+  setI(()=> { if(state.gameActive && processed < needed) spawnEmail(); }, spawnRate);
   spawnEmail();
 }
 
-/* ИГРА 2: FIREWALL */
-function initFirewall() {
+/* ============ ИГРА 2: FIREWALL ============ */
+function initFirewall(diff) {
   state.gameActive = true;
   const shield = document.createElement('div');
   shield.id = 'shield';
-  shield.textContent = '🛡️';
+  shield.textContent = '🛡';
   area.appendChild(shield);
   
   const info = document.createElement('div');
-  info.style.cssText = 'position:absolute;top:10px;left:10px;right:10px;text-align:center;font-size:13px;color:#aab;z-index:5';
-  info.innerHTML = '🦠 блокируй | 📦 пропускай';
+  info.style.cssText = 'position:absolute;top:10px;left:10px;right:10px;text-align:center;font-size:11px;color:#00ffcc88;z-index:5;letter-spacing:1px';
+  info.textContent = '> 🦠 БЛОКИРУЙ // 📦 ПРОПУСКАЙ';
   area.appendChild(info);
   
   let shieldX = area.offsetWidth/2;
@@ -292,13 +773,16 @@ function initFirewall() {
     const rect = area.getBoundingClientRect();
     const touch = e.touches ? e.touches[0] : e;
     shieldX = touch.clientX - rect.left;
-    shieldX = Math.max(35, Math.min(area.offsetWidth-35, shieldX));
+    shieldX = Math.max(40, Math.min(area.offsetWidth-40, shieldX));
     shield.style.left = shieldX + 'px';
   }
   area.addEventListener('touchmove', moveHandler, {passive:true});
   area.addEventListener('mousemove', moveHandler);
   
-  let blocked = 0, needed = 8, speed = 2.5;
+  let blocked = 0;
+  const needed = diff === 1 ? 8 : 12;
+  let speed = diff === 1 ? 2.5 : 3.5;
+  const spawnRate = diff === 1 ? 1000 : 700;
   
   function spawnPacket() {
     if(!state.gameActive || blocked >= needed) return;
@@ -318,16 +802,16 @@ function initFirewall() {
       p.style.top = y + 'px';
       
       const sBottom = area.offsetHeight - 30;
-      const sTop = sBottom - 70;
+      const sTop = sBottom - 80;
       const px = x + 25;
       
-      if(y+50 >= sTop && y <= sBottom && Math.abs(px - shieldX) < 45) {
+      if(y+50 >= sTop && y <= sBottom && Math.abs(px - shieldX) < 50) {
         clearInterval(anim);
         if(isVirus) { state.score += 10; blocked++; }
         else { if(loseLife()) { p.remove(); return; } }
         updateHUD();
         p.remove();
-        if(blocked >= needed) { state.gameActive=false; setTimeout(nextGame, 500); }
+        if(blocked >= needed) { state.gameActive=false; setTimeout(nextGame, 600); }
         return;
       }
       
@@ -344,24 +828,24 @@ function initFirewall() {
   setI(()=> {
     if(state.gameActive && blocked < needed) {
       spawnPacket();
-      speed = Math.min(5, speed + 0.05);
+      speed = Math.min(diff === 1 ? 5 : 7, speed + 0.05);
     }
-  }, 1000);
+  }, spawnRate);
 }
 
-/* ИГРА 3: PASSWORD */
-function initPassword() {
+/* ============ ИГРА 3: PASSWORD ============ */
+function initPassword(diff) {
   state.gameActive = true;
   let password = '';
   
   const display = document.createElement('div');
   display.id = 'passDisplay';
-  display.textContent = 'Пароль: ';
+  display.textContent = '> PASSWORD: ';
   area.appendChild(display);
   
   const info = document.createElement('div');
-  info.style.cssText = 'position:absolute;top:50px;left:10px;right:10px;text-align:center;font-size:12px;color:#aab;z-index:5';
-  info.textContent = 'Лови: A-Z, 0-9, !@#. Избегай красные';
+  info.style.cssText = 'position:absolute;top:50px;left:10px;right:10px;text-align:center;font-size:11px;color:#00ffcc88;z-index:5;letter-spacing:1px';
+  info.textContent = '> ЛОВИ A-Z 0-9 !@# // ИЗБЕГАЙ КРАСНЫЕ';
   area.appendChild(info);
   
   const basket = document.createElement('div');
@@ -376,19 +860,22 @@ function initPassword() {
     const rect = area.getBoundingClientRect();
     const touch = e.touches ? e.touches[0] : e;
     basketX = touch.clientX - rect.left;
-    basketX = Math.max(45, Math.min(area.offsetWidth-45, basketX));
+    basketX = Math.max(50, Math.min(area.offsetWidth-50, basketX));
     basket.style.left = basketX + 'px';
   }
   area.addEventListener('touchmove', moveHandler, {passive:true});
   area.addEventListener('mousemove', moveHandler);
   
   const goodChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789!@#$%&*';
-  const badChars = 'абвгдежзий';
-  const needed = 10;
+  const badChars = diff === 1 ? 'абвгдежзий' : 'абвгдежзий 12345';
+  const needed = diff === 1 ? 10 : 14;
+  const baseSpeed = diff === 1 ? 2 : 2.8;
+  const spawnRate = diff === 1 ? 800 : 550;
+  const goodProb = diff === 1 ? 0.6 : 0.5;
   
   function spawnChar() {
     if(!state.gameActive || password.length >= needed) return;
-    const isGood = Math.random() < 0.6;
+    const isGood = Math.random() < goodProb;
     const ch = isGood ? goodChars[Math.floor(Math.random()*goodChars.length)] : badChars[Math.floor(Math.random()*badChars.length)];
     const el = document.createElement('div');
     el.className = 'char ' + (isGood?'good':'bad');
@@ -399,27 +886,27 @@ function initPassword() {
     area.appendChild(el);
     
     let y = 0;
-    const speed = 2 + Math.random()*1.5;
+    const speed = baseSpeed + Math.random()*1.5;
     const anim = setI(()=> {
       if(!state.gameActive) { clearInterval(anim); el.remove(); return; }
       y += speed;
       el.style.top = y + 'px';
       
       const bBottom = area.offsetHeight - 20;
-      const bTop = bBottom - 30;
+      const bTop = bBottom - 35;
       const cx = x + 22;
       
-      if(y+45 >= bTop && y <= bBottom && Math.abs(cx - basketX) < 55) {
+      if(y+45 >= bTop && y <= bBottom && Math.abs(cx - basketX) < 60) {
         clearInterval(anim);
         if(isGood) {
           password += ch;
           state.score += 10;
-          display.textContent = 'Пароль: ' + password;
+          display.textContent = '> PASSWORD: ' + password;
           if(password.length >= needed) {
             state.gameActive = false;
             state.score += 50;
             updateHUD();
-            showMsg('🔐 Надёжный пароль!', 1200);
+            showMsg('🔐 SECURE', 1200);
             setTimeout(nextGame, 1300);
           }
         } else {
@@ -434,27 +921,35 @@ function initPassword() {
     }, 16);
   }
   
-  setI(()=> { if(state.gameActive) spawnChar(); }, 800);
+  setI(()=> { if(state.gameActive) spawnChar(); }, spawnRate);
 }
 
-/* ИГРА 4: CAPTCHA */
-function initCaptcha() {
+/* ============ ИГРА 4: CAPTCHA ============ */
+function initCaptcha(diff) {
   state.gameActive = true;
   const tasks = [
-    {q:'Выбери все 🚗 машины', target:'🚗', options:['🚗','🚲','🚗','🛵','🚗','🚂','🚗','✈️','🚦']},
-    {q:'Выбери все 🚦 светофоры', target:'🚦', options:['🚦','🏠','🚦','🌳','🚲','🚦','🚦','🛑','🌉']},
-    {q:'Выбери все 🌉 мосты', target:'🌉', options:['🏠','🌉','🚗','🌉','🌳','🌉','🛣️','🌉','🚦']},
-    {q:'Выбери все 🚲 велосипеды', target:'🚲', options:['🚲','🚗','🚲','✈️','🚲','🛵','🚲','🚦','🌳']},
-    {q:'Выбери все 🏠 дома', target:'🏠', options:['🏠','🌳','🏠','🚗','🏠','🌉','🏠','🚲','🚦']},
+    {q:'Выбери все 🚗 машины', target:'🚗', pool:['🚗','🚲','🛵','🚂','✈️','🚦','🏠','🌳','🚀','🚁']},
+    {q:'Выбери все 🚦 светофоры', target:'🚦', pool:['🚦','🏠','🌳','🚲','🛑','🌉','🚗','✈️','🚂']},
+    {q:'Выбери все 🌉 мосты', target:'🌉', pool:['🏠','🌉','🚗','🌳','🛣️','🚦','🚲','🛵','🌊']},
+    {q:'Выбери все 🚲 велосипеды', target:'🚲', pool:['🚲','🚗','✈️','🛵','🚦','🌳','🏠','🚂','🛴']},
+    {q:'Выбери все 🏠 дома', target:'🏠', pool:['🏠','🌳','🚗','🌉','🚲','🚦','🏢','🏰','✈️']},
+    {q:'Выбери все 🌳 деревья', target:'🌳', pool:['🌳','🌲','🏠','🚗','🌵','🌴','🚦','🌉','🌊']},
+    {q:'Выбери все ✈️ самолёты', target:'✈️', pool:['✈️','🚁','🚀','🚗','🛵','🏠','✈️','🌳','🚦']},
+    {q:'Выбери все 🚀 ракеты', target:'🚀', pool:['🚀','✈️','🚁','🛸','🚗','🏠','🌳','🚦','🌉']},
   ];
   
   let round = 0;
-  const totalRounds = 3;
+  const totalRounds = diff === 1 ? 3 : 4;
+  const gridSize = diff === 1 ? 3 : 4;
+  const totalCells = gridSize * gridSize;
+  const startTime = diff === 1 ? 12 : 10;
   
   function nextRound() {
     if(!state.gameActive) return;
     if(round >= totalRounds) {
       state.gameActive = false;
+      state.score += 30;
+      updateHUD();
       setTimeout(nextGame, 600);
       return;
     }
@@ -464,16 +959,26 @@ function initCaptcha() {
     
     const taskEl = document.createElement('div');
     taskEl.className = 'captcha-task';
-    taskEl.textContent = task.q;
+    taskEl.textContent = '[' + (round+1) + '/' + totalRounds + '] ' + task.q;
     area.appendChild(taskEl);
+    
+    // Генерируем клетки: 3-5 целевых + остальные случайные
+    const targetCount = Math.floor(Math.random() * 3) + 3;
+    const cells = [];
+    for(let i = 0; i < targetCount; i++) cells.push(task.target);
+    const others = task.pool.filter(x => x !== task.target);
+    while(cells.length < totalCells) {
+      cells.push(others[Math.floor(Math.random()*others.length)]);
+    }
+    cells.sort(()=> Math.random()-0.5);
     
     const grid = document.createElement('div');
     grid.className = 'captcha-grid';
+    grid.style.gridTemplateColumns = 'repeat(' + gridSize + ', 1fr)';
     
-    const opts = task.options.slice().sort(()=> Math.random()-0.5);
     const selected = new Set();
     
-    opts.forEach((emoji, i) => {
+    cells.forEach((emoji, i) => {
       const cell = document.createElement('div');
       cell.className = 'captcha-cell';
       cell.textContent = emoji;
@@ -492,15 +997,17 @@ function initCaptcha() {
     area.appendChild(grid);
     
     const timerEl = document.createElement('div');
-    timerEl.style.cssText = 'text-align:center;font-size:18px;font-weight:bold;color:#4fc3f7;padding:5px';
-    let timeLeft = 10;
+    timerEl.style.cssText = 'text-align:center;font-size:16px;font-weight:bold;color:#00ffcc;padding:5px;font-family:Orbitron,sans-serif;letter-spacing:2px;text-shadow:0 0 8px #00ffcc';
+    let timeLeft = startTime;
     timerEl.textContent = '⏱ ' + timeLeft + 'с';
     area.appendChild(timerEl);
     
     const submitBtn = document.createElement('button');
     submitBtn.className = 'btn';
     submitBtn.style.margin = '10px auto';
-    submitBtn.textContent = '✓ Проверить';
+    submitBtn.style.minWidth = '180px';
+    submitBtn.style.padding = '12px 25px';
+    submitBtn.textContent = 'ПРОВЕРИТЬ';
     area.appendChild(submitBtn);
     
     const timer = setI(()=> {
@@ -517,7 +1024,7 @@ function initCaptcha() {
     function checkAnswer(timeout) {
       clearInterval(timer);
       let correct = true;
-      opts.forEach((emoji, i) => {
+      cells.forEach((emoji, i) => {
         const shouldSelect = emoji === task.target;
         const isSelected = selected.has(i);
         if(shouldSelect !== isSelected) correct = false;
@@ -525,12 +1032,12 @@ function initCaptcha() {
       
       if(correct && !timeout) {
         state.score += 25;
-        showMsg('✅ Верно!', 800);
+        showMsg('✓ ВЕРНО', 800);
         round++;
         updateHUD();
         setTimeout(nextRound, 900);
       } else {
-        showMsg(timeout ? '⏱ Время вышло!' : '❌ Ошибка!', 800);
+        showMsg(timeout ? '⏱ ВРЕМЯ' : '✗ ОШИБКА', 800);
         if(loseLife()) return;
         round++;
         setTimeout(nextRound, 900);
@@ -543,21 +1050,25 @@ function initCaptcha() {
   nextRound();
 }
 
-/* ИГРА 5: ANTIVIRUS */
-function initAntivirus() {
+/* ============ ИГРА 5: ANTIVIRUS ============ */
+function initAntivirus(diff) {
   state.gameActive = true;
   
   const info = document.createElement('div');
-  info.style.cssText = 'position:absolute;top:5px;left:10px;right:10px;text-align:center;font-size:12px;color:#aab;z-index:10';
-  info.textContent = 'Соединяй пары одинаковых угроз';
+  info.style.cssText = 'position:absolute;top:5px;left:10px;right:10px;text-align:center;font-size:11px;color:#00ffcc88;z-index:10;letter-spacing:1px';
+  info.textContent = '> СОЕДИНЯЙ ПАРЫ УГРОЗ';
   area.appendChild(info);
   
-  const threats = ['🦠','🐛','👾','💀','🔓','⚠️'];
-  const rows = 4, cols = 3;
+  const allThreats = ['🦠','🐛','👾','💀','🔓','⚠️','☠️','🕷️','👹','🤖'];
+  const rows = diff === 1 ? 4 : 5;
+  const cols = diff === 1 ? 3 : 4;
   const total = rows * cols;
+  const pairsCount = total / 2;
+  const startTime = diff === 1 ? 30 : 35;
   
+  const threats = allThreats.slice(0, pairsCount);
   const cells = [];
-  for(let i=0; i<total/2; i++) {
+  for(let i=0; i<pairsCount; i++) {
     const t = threats[i % threats.length];
     cells.push(t, t);
   }
@@ -572,10 +1083,10 @@ function initAntivirus() {
   let selected = null;
   let matched = 0;
   let canClick = true;
-  let timeLeft = 30;
+  let timeLeft = startTime;
   
   const timerEl = document.createElement('div');
-  timerEl.style.cssText = 'position:absolute;bottom:5px;left:0;right:0;text-align:center;font-size:16px;font-weight:bold;color:#4fc3f7;z-index:10';
+  timerEl.style.cssText = 'position:absolute;bottom:5px;left:0;right:0;text-align:center;font-size:16px;font-weight:bold;color:#00ffcc;z-index:10;font-family:Orbitron,sans-serif;letter-spacing:2px;text-shadow:0 0 8px #00ffcc';
   timerEl.textContent = '⏱ ' + timeLeft + 'с';
   area.appendChild(timerEl);
   
@@ -587,9 +1098,9 @@ function initAntivirus() {
     if(timeLeft <= 0) {
       clearInterval(timer);
       state.gameActive = false;
-      if(matched < total/2) {
+      if(matched < pairsCount) {
         loseLife();
-        showMsg('⏱ Время вышло!', 1000);
+        showMsg('⏱ ВРЕМЯ ВЫШЛО', 1000);
       }
       setTimeout(nextGame, 1200);
     }
@@ -624,12 +1135,12 @@ function initAntivirus() {
             updateHUD();
             canClick = true;
             
-            if(matched >= total/2) {
+            if(matched >= pairsCount) {
               clearInterval(timer);
               state.gameActive = false;
               state.score += 50;
               updateHUD();
-              showMsg('🛡️ Угрозы устранены!', 1200);
+              showMsg('🛡 СИСТЕМА ОЧИЩЕНА', 1200);
               setTimeout(nextGame, 1300);
             }
           }, 300);
@@ -649,11 +1160,11 @@ function initAntivirus() {
   });
 }
 
-// Кнопки
+// === Кнопки ===
 document.getElementById('startBtn').addEventListener('click', startGame);
 document.getElementById('restartBtn').addEventListener('click', startGame);
 
-// Защита от прокрутки/масштаба
+// === Защита от прокрутки/масштаба ===
 document.addEventListener('touchmove', e => {
   if(e.target.closest('#gameArea')) e.preventDefault();
 }, {passive:false});
