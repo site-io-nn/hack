@@ -36,11 +36,17 @@ html, body { height: 100%; overflow: hidden; font-family: 'Share Tech Mono', mon
 }
 .screen.active { display: flex; }
 
-/* === ENDSCREEN SCROLL === */
 #endScreen.active { overflow-y: auto; }
 #endScreen .center-content { 
   justify-content: flex-start; padding-top: 20px; padding-bottom: 30px;
   min-height: 100%;
+}
+
+#adviceScreen.active { overflow-y: auto; }
+#adviceScreen .advice-content {
+  flex: 1; display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 20px; min-height: 100%;
 }
 
 h1 { 
@@ -112,7 +118,6 @@ p {
   clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
 }
 
-/* === EMAIL === */
 .email { 
   position: absolute; width: 92%; left: 4%;
   background: linear-gradient(135deg, rgba(0,40,40,0.95), rgba(0,20,20,0.95));
@@ -138,7 +143,6 @@ p {
   font-size: 11px; color: #00ffcc88; z-index: 5; letter-spacing: 1px;
 }
 
-/* === FIREWALL === */
 .packet { 
   position: absolute; width: 50px; height: 50px;
   display: flex; align-items: center; justify-content: center;
@@ -173,7 +177,6 @@ p {
   50% { box-shadow: 0 0 50px #00ffcc, inset 0 0 30px rgba(0,255,204,0.5); }
 }
 
-/* === PASSWORD === */
 .char { 
   position: absolute; width: 45px; height: 45px;
   display: flex; align-items: center; justify-content: center;
@@ -210,7 +213,6 @@ p {
   box-shadow: 0 0 10px rgba(0,255,204,0.3), inset 0 0 5px rgba(0,255,204,0.1);
 }
 
-/* === CAPTCHA === */
 .captcha-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 15px; }
 .captcha-cell { 
   aspect-ratio: 1;
@@ -235,7 +237,6 @@ p {
   font-family: 'Orbitron', sans-serif;
 }
 
-/* === ANTIVIRUS === */
 .av-grid { 
   position: absolute; left: 10px; right: 10px; top: 35px; bottom: 35px;
   display: grid; gap: 6px;
@@ -258,7 +259,6 @@ p {
   border-color: #00ffcc22;
 }
 
-/* === MESSAGE === */
 #message { 
   position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
   background: rgba(0,0,0,0.95);
@@ -273,22 +273,14 @@ p {
   clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
 }
 
-/* === PROGRESS === */
 .progress { display: flex; gap: 3px; margin-bottom: 10px; }
 .progress div { 
   flex: 1; height: 5px;
   background: rgba(0,255,204,0.15);
   border: 1px solid rgba(0,255,204,0.3);
 }
-.progress div.done { 
-  background: #00ffcc;
-  box-shadow: 0 0 8px #00ffcc;
-}
-.progress div.current { 
-  background: #00ffcc;
-  box-shadow: 0 0 12px #00ffcc;
-  animation: pulse 1s infinite;
-}
+.progress div.done { background: #00ffcc; box-shadow: 0 0 8px #00ffcc; }
+.progress div.current { background: #00ffcc; box-shadow: 0 0 12px #00ffcc; animation: pulse 1s infinite; }
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
@@ -314,7 +306,6 @@ p {
   box-shadow: inset 0 0 10px rgba(0,255,204,0.05);
 }
 
-/* === TUTORIAL SCREEN === */
 .tutorial-content {
   flex: 1; display: flex; flex-direction: column;
   justify-content: center; align-items: center;
@@ -380,24 +371,16 @@ p {
   width: 0%;
 }
 
-#skipTutBtn {
+#skipTutBtn, #skipAdviceBtn {
   margin-top: 20px; min-width: 180px; padding: 10px 20px; font-size: 13px;
 }
 
-.title-glitch {
-  position: relative;
-}
+.title-glitch { position: relative; }
 .title-glitch::before, .title-glitch::after {
   content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%;
 }
-.title-glitch::before {
-  animation: glitch1 2s infinite;
-  color: #ff0055; z-index: -1;
-}
-.title-glitch::after {
-  animation: glitch2 3s infinite;
-  color: #0088ff; z-index: -2;
-}
+.title-glitch::before { animation: glitch1 2s infinite; color: #ff0055; z-index: -1; }
+.title-glitch::after { animation: glitch2 3s infinite; color: #0088ff; z-index: -2; }
 @keyframes glitch1 {
   0%, 100% { transform: translate(0); }
   20% { transform: translate(-2px, 2px); }
@@ -431,8 +414,117 @@ p {
   margin-top: 10px;
   letter-spacing: 2px;
 }
-
 .terminal-text::before { content: '> '; }
+
+/* === ADVICE SCREEN === */
+.advice-badge {
+  display: inline-block;
+  padding: 5px 14px;
+  background: rgba(255,204,0,0.12);
+  border: 1px solid #ffcc00;
+  color: #ffcc00;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  letter-spacing: 3px;
+  margin-bottom: 15px;
+  text-shadow: 0 0 8px #ffcc00;
+  box-shadow: 0 0 12px rgba(255,204,0,0.3);
+}
+
+.advice-icon {
+  font-size: 70px; margin-bottom: 15px;
+  filter: drop-shadow(0 0 20px #ffcc00);
+  animation: float 2s ease-in-out infinite;
+}
+
+.advice-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 22px; font-weight: 900;
+  color: #ffcc00;
+  text-shadow: 0 0 15px #ffcc00, 0 0 25px #ffcc00;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  text-align: center;
+  padding: 0 10px;
+}
+
+.advice-subtitle {
+  font-size: 12px; color: #ffcc0099;
+  letter-spacing: 4px; margin-bottom: 20px;
+}
+
+.advice-card {
+  background: linear-gradient(135deg, rgba(255,204,0,0.08), rgba(0,255,204,0.05));
+  border: 2px solid #ffcc00;
+  border-left-width: 5px;
+  padding: 20px;
+  font-size: 14px; line-height: 1.7;
+  color: #fff5cc;
+  max-width: 95%; width: 95%;
+  box-shadow: 0 0 20px rgba(255,204,0,0.25), inset 0 0 15px rgba(255,204,0,0.05);
+  margin-bottom: 15px;
+  text-align: left;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+
+.advice-card .advice-text {
+  font-size: 15px;
+  color: #ffffff;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.advice-card .advice-how {
+  background: rgba(0,0,0,0.4);
+  border-left: 3px solid #00ffcc;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #aaffee;
+  margin-top: 10px;
+  line-height: 1.6;
+}
+
+.advice-card .advice-how strong {
+  color: #00ffcc;
+  text-shadow: 0 0 6px #00ffcc;
+  letter-spacing: 1px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+}
+
+.advice-countdown {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 50px; font-weight: 900;
+  color: #ffcc00;
+  text-shadow: 0 0 25px #ffcc00;
+  margin-top: 5px;
+  animation: countPulse 1s infinite;
+}
+
+.advice-bar {
+  width: 80%; height: 6px;
+  background: rgba(255,204,0,0.15);
+  border: 1px solid #ffcc00;
+  margin-top: 12px;
+  overflow: hidden;
+}
+.advice-bar-fill {
+  height: 100%; background: #ffcc00;
+  box-shadow: 0 0 10px #ffcc00;
+  width: 0%;
+}
+
+#skipAdviceBtn {
+  border-color: #ffcc00;
+  color: #ffcc00;
+  text-shadow: 0 0 6px #ffcc00;
+  box-shadow: 0 0 15px rgba(255,204,0,0.4), inset 0 0 10px rgba(255,204,0,0.1);
+}
+#skipAdviceBtn:active {
+  background: #ffcc00;
+  color: #000;
+  text-shadow: none;
+}
 
 /* === PRIZE / QR CODE === */
 #prizeBox {
@@ -521,7 +613,7 @@ p {
 <div class="screen active" id="menuScreen">
   <div class="center-content">
     <h1 class="title-glitch" data-text="CYBERGUARD">Информационная Безопасность</h1>
-    <div class="terminal-text">SYSTEM v2.2 // INITIALIZING...</div>
+    <div class="terminal-text">SYSTEM v2.3 // INITIALIZING...</div>
     <p style="margin-top:25px;">10 уровней кибербезопасности</p>
     <div class="tip">
       <strong>&gt; БРИФИНГ:</strong><br>
@@ -532,7 +624,7 @@ p {
       🦠 Удаляй угрозы с системы
     </div>
     <p style="font-size:12px;color:#00ffcc88;">5 жизней на все 10 уровней</p>
-    <p style="font-size:12px;color:#ffcc00;text-shadow:0 0 8px #ffcc00;">🎁 ПРИЗ ЗА ПОБЕДУ!</p>
+    <p style="font-size:12px;color:#ffcc00;text-shadow:0 0 8px #ffcc00;">🛡 СОВЕТЫ + 🎁 ПРИЗ ЗА ПОБЕДУ!</p>
     <button class="btn" id="startBtn">ВОЙТИ В СИСТЕМУ</button>
   </div>
 </div>
@@ -547,6 +639,19 @@ p {
     <div class="tutorial-countdown" id="tutCount">10</div>
     <div class="tutorial-bar"><div class="tutorial-bar-fill" id="tutBar"></div></div>
     <button class="btn" id="skipTutBtn">ПРОПУСТИТЬ</button>
+  </div>
+</div>
+
+<div class="screen" id="adviceScreen">
+  <div class="advice-content">
+    <div class="advice-badge" id="adviceBadge">СОВЕТ 01/10</div>
+    <div class="advice-icon" id="adviceIcon">💡</div>
+    <div class="advice-title" id="adviceTitle">СОВЕТ ПО БЕЗОПАСНОСТИ</div>
+    <div class="advice-subtitle">// ЗАПОМНИ ЭТО</div>
+    <div class="advice-card" id="adviceCard"></div>
+    <div class="advice-countdown" id="adviceCount">15</div>
+    <div class="advice-bar"><div class="advice-bar-fill" id="adviceBar"></div></div>
+    <button class="btn" id="skipAdviceBtn">ПРОДОЛЖИТЬ</button>
   </div>
 </div>
 
@@ -596,11 +701,11 @@ const PRIZE_URL = 'https://t.me/addstickers/mojimeow';
 const $ = id => document.getElementById(id);
 const MAX_LIVES = 5;
 const TUTORIAL_TIME = 10;
+const ADVICE_TIME = 15;
 let area;
 const state = { current: 0, score: 0, lives: MAX_LIVES, gameActive: false };
 let activeTimers = [];
 
-// 10 уровней: каждая механика 2 раза с усложнением
 const levels = [
   { game: 'phishing', difficulty: 1 },
   { game: 'firewall', difficulty: 1 },
@@ -612,6 +717,70 @@ const levels = [
   { game: 'password', difficulty: 2 },
   { game: 'captcha', difficulty: 2 },
   { game: 'antivirus', difficulty: 2 },
+];
+
+// 🛡 10 РЕАЛЬНЫХ СОВЕТОВ ПО БЕЗОПАСНОСТИ
+const adviceList = [
+  {
+    icon: '🔐',
+    title: 'ДВУХФАКТОРНАЯ АУТЕНТИФИКАЦИЯ',
+    text: 'Включи <strong>2FA</strong> на всех важных аккаунтах (почта, банк, соцсети). Даже если злоумышленник узнает твой пароль, без второго фактора он не войдёт.',
+    how: 'КАК: используй приложения вроде Google Authenticator, Authy или Aegis. SMS-коды менее надёжны — их могут перехватить через подмену SIM-карты.'
+  },
+  {
+    icon: '🗝️',
+    title: 'МЕНЕДЖЕР ПАРОЛЕЙ',
+    text: 'Не запоминай пароли в голове и не храни их в заметках. Используй <strong>менеджер паролей</strong> — он создаст уникальный сложный пароль для каждого сайта.',
+    how: 'КАК: попробуй Bitwarden (бесплатный), KeePassXC (офлайн) или 1Password. Запомни только один мастер-пароль — остальное менеджер сделает сам.'
+  },
+  {
+    icon: '🔄',
+    title: 'ОБНОВЛЯЙ ПО ВОВРЕМЯ',
+    text: 'Не игнорируй обновления системы и приложений. В 60% взломов используются <strong>известные уязвимости</strong>, которые давно закрыты патчами.',
+    how: 'КАК: включи автообновление в Windows/macOS/Android/iOS. Регулярно обновляй браузер — это твоя главная защита в интернете.'
+  },
+  {
+    icon: '📶',
+    title: 'ОПАСНЫЙ ПУБЛИЧНЫЙ Wi-Fi',
+    text: 'В кафе, аэропорту или метро <strong>не вводи пароли и не заходи в банк</strong> через открытый Wi-Fi. Злоумышленник может перехватить твой трафик.',
+    how: 'КАК: используй VPN (например, Proton VPN) или мобильный интернет. Проверяй наличие 🔒 HTTPS в адресной строке — это базовая защита.'
+  },
+  {
+    icon: '🔍',
+    title: 'ПРОВЕРЯЙ ССЫЛКИ ПЕРЕД КЛИКОМ',
+    text: 'Перед нажатием на ссылку <strong>наведи на неё курсор</strong> (или удерживай палец на телефоне) — внизу покажется реальный адрес. Часто он отличается от того, что написано.',
+    how: 'КАК: ищи опечатки в домене (sber8ank.ru вместо sberbank.ru), лишние поддомены и странные зоны (.xyz, .tk). При сомнении — открой сайт вручную.'
+  },
+  {
+    icon: '💾',
+    title: 'ДЕЛАЙ РЕЗЕРВНЫЕ КОПИИ',
+    text: 'Шифровальщики (ransomware) могут заблокировать все твои файлы. Единственная гарантированная защита — <strong>регулярные бэкапы</strong>.',
+    how: 'КАК: следуй правилу 3-2-1: 3 копии данных, на 2 разных носителях, 1 копия — вне дома (облако или отдельный диск, который не подключён постоянно).'
+  },
+  {
+    icon: '🎭',
+    title: 'НЕ ДОВЕРЯЙ ЗВОНКАМ "ИЗ БАНКА"',
+    text: 'Настоящий банк <strong>никогда не просит код из SMS</strong>, CVV-код карты или полный пароль. Если звонят и торопят — это мошенники, даже если номер похож на банковский.',
+    how: 'КАК: положи трубку и перезвони сам по номеру с обратной стороны карты. Никогда не диктуй коды и не устанавливай приложения по просьбе "сотрудника".'
+  },
+  {
+    icon: '👁️',
+    title: 'МИНИМУМ ЛИЧНЫХ ДАННЫХ',
+    text: 'Не публикуй в соцсетях <strong>дату рождения, адрес, номер телефона, фото документов</strong>. Эта информация используется для взлома и социальной инженерии.',
+    how: 'КАК: проверь настройки приватности — скрой профиль от посторонних. Перед регистрацией на сайте подумай: реально ли ему нужны все эти данные?'
+  },
+  {
+    icon: '📧',
+    title: 'РАЗНЫЕ ПОЧТЫ ДЛЯ РАЗНЫХ ЦЕЛЕЙ',
+    text: 'Используй <strong>отдельную email-почту</strong> для важных аккаунтов (банк, госуслуги) и другую — для регистраций на сомнительных сайтах. Утечка одной не затронет другую.',
+    how: 'КАК: заведи 2-3 почты или используй сервисы одноразовых email (SimpleLogin, AnonAddy). Адрес главной почты никому не давай без необходимости.'
+  },
+  {
+    icon: '🚫',
+    title: 'НЕ СКАЧИВАЙ ПО ССЫЛКАМ ИЗ СООБЩЕНИЙ',
+    text: 'Файлы и APK-приложения из мессенджеров, SMS или email — <strong>самый частый способ заражения</strong> телефона вирусом-шпионом, который крадёт пароли и деньги.',
+    how: 'КАК: устанавливай приложения только из официальных магазинов (Google Play, App Store, RuStore). На Android отключи "Установку из неизвестных источников".'
+  }
 ];
 
 const gameInfo = {
@@ -691,6 +860,7 @@ function showTutorial() {
   if(state.lives <= 0) return endGame(false);
   
   $('gameScreen').classList.remove('active');
+  $('adviceScreen').classList.remove('active');
   $('tutorialScreen').classList.add('active');
   
   const lvl = levels[state.current];
@@ -712,7 +882,7 @@ function showTutorial() {
     bar.style.width = '100%';
   }, 50);
   
-  if(tutorialTimer) clearInterval(tutorialTimer);
+    if(tutorialTimer) clearInterval(tutorialTimer);
   tutorialTimer = setInterval(() => {
     count--;
     $('tutCount').textContent = count;
@@ -727,6 +897,7 @@ function showTutorial() {
 function beginLevel() {
   if(tutorialTimer) { clearInterval(tutorialTimer); tutorialTimer = null; }
   $('tutorialScreen').classList.remove('active');
+  $('adviceScreen').classList.remove('active');
   $('gameScreen').classList.add('active');
   area = $('gameArea');
   area.innerHTML = '';
@@ -747,17 +918,81 @@ function startLevel() {
   else if(g==='antivirus') initAntivirus(d);
 }
 
+// === ЭКРАН СОВЕТА ===
+let adviceTimer = null;
+function showAdvice() {
+  // Если жизней нет — сразу на экран поражения
+  if(state.lives <= 0) return endGame(false);
+  // Если все уровни пройдены — победа
+  if(state.current >= 10) return endGame(true);
+  
+  clearTimers();
+  $('gameScreen').classList.remove('active');
+  $('tutorialScreen').classList.remove('active');
+  $('adviceScreen').classList.add('active');
+  
+  // Совет соответствует только что пройденному уровню (state.current - 1)
+  const adviceIndex = state.current - 1;
+  const advice = adviceList[adviceIndex];
+  
+  $('adviceBadge').textContent = 'СОВЕТ ' + String(adviceIndex + 1).padStart(2,'0') + '/10';
+  $('adviceIcon').textContent = advice.icon;
+  $('adviceTitle').textContent = advice.title;
+  $('adviceCard').innerHTML = 
+    '<div class="advice-text">' + advice.text + '</div>' +
+    '<div class="advice-how"><strong>' + advice.how.split(':')[0] + ':</strong>' + advice.how.substring(advice.how.indexOf(':')+1) + '</div>';
+  
+  let count = ADVICE_TIME;
+  $('adviceCount').textContent = count;
+  const bar = $('adviceBar');
+  bar.style.transition = 'none';
+  bar.style.width = '0%';
+  
+  setTimeout(() => {
+    bar.style.transition = 'width ' + ADVICE_TIME + 's linear';
+    bar.style.width = '100%';
+  }, 50);
+  
+  if(adviceTimer) clearInterval(adviceTimer);
+  adviceTimer = setInterval(() => {
+    count--;
+    $('adviceCount').textContent = count;
+    if(count <= 5) $('adviceCount').style.color = '#ff8800';
+    else $('adviceCount').style.color = '';
+    if(count <= 0) {
+      clearInterval(adviceTimer);
+      adviceTimer = null;
+      showTutorial();
+    }
+  }, 1000);
+}
+
+function skipAdvice() {
+  if(adviceTimer) { clearInterval(adviceTimer); adviceTimer = null; }
+  $('adviceCount').style.color = '';
+  showTutorial();
+}
+
+// Вызывается после успешного прохождения уровня
 function nextGame() {
   state.current++;
-  showTutorial();
+  // Если ещё есть уровни — сначала совет, потом туториал
+  if(state.current < 10) {
+    showAdvice();
+  } else {
+    // После 10-го уровня тоже показываем последний совет, затем победа
+    showAdvice();
+  }
 }
 
 function endGame(win) {
   state.gameActive = false;
   clearTimers();
   if(tutorialTimer) { clearInterval(tutorialTimer); tutorialTimer = null; }
+  if(adviceTimer) { clearInterval(adviceTimer); adviceTimer = null; }
   $('gameScreen').classList.remove('active');
   $('tutorialScreen').classList.remove('active');
+  $('adviceScreen').classList.remove('active');
   $('endScreen').classList.add('active');
   $('endTitle').textContent = win ? 'VICTORY' : 'GAME OVER';
   $('endTitle').setAttribute('data-text', win ? 'VICTORY' : 'GAME OVER');
@@ -765,7 +1000,6 @@ function endGame(win) {
   $('endText').textContent = win ? 'Ты прошёл все 10 уровней!' : 'Атаки прорвали защиту...';
   $('endScore').textContent = String(state.score).padStart(4,'0');
   
-  // 🎁 Показываем приз только при победе
   const prizeBox = $('prizeBox');
   if(win) {
     const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(PRIZE_URL) + '&bgcolor=ffffff&color=001a1a&margin=10';
@@ -773,7 +1007,6 @@ function endGame(win) {
     $('prizeLink').href = PRIZE_URL;
     $('prizeLink').textContent = PRIZE_URL;
     prizeBox.style.display = 'block';
-    // сброс кнопки копирования
     const cb = $('copyBtn');
     cb.textContent = 'КОПИРОВАТЬ ССЫЛКУ';
     cb.classList.remove('copied');
@@ -793,7 +1026,6 @@ function loseLife() {
   return false;
 }
 
-// === Копирование ссылки приза ===
 function copyPrizeLink() {
   const cb = $('copyBtn');
   const onSuccess = () => {
@@ -806,9 +1038,7 @@ function copyPrizeLink() {
   };
   
   if(navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(PRIZE_URL).then(onSuccess).catch(() => {
-      fallbackCopy();
-    });
+    navigator.clipboard.writeText(PRIZE_URL).then(onSuccess).catch(() => { fallbackCopy(); });
   } else {
     fallbackCopy();
   }
@@ -945,7 +1175,7 @@ function initFirewall(diff) {
   let shieldX = area.offsetWidth/2;
   shield.style.left = shieldX + 'px';
   
-    function moveHandler(e) {
+  function moveHandler(e) {
     if(!state.gameActive) return;
     const rect = area.getBoundingClientRect();
     const touch = e.touches ? e.touches[0] : e;
@@ -1148,7 +1378,7 @@ function initCaptcha(diff) {
     }
     cells.sort(()=> Math.random()-0.5);
     
-    const grid = document.createElement('div');
+        const grid = document.createElement('div');
     grid.className = 'captcha-grid';
     grid.style.gridTemplateColumns = 'repeat(' + gridSize + ', 1fr)';
     
@@ -1340,6 +1570,7 @@ function initAntivirus(diff) {
 document.getElementById('startBtn').addEventListener('click', startGame);
 document.getElementById('restartBtn').addEventListener('click', startGame);
 document.getElementById('skipTutBtn').addEventListener('click', beginLevel);
+document.getElementById('skipAdviceBtn').addEventListener('click', skipAdvice);
 document.getElementById('copyBtn').addEventListener('click', copyPrizeLink);
 
 // === Защита от прокрутки/масштаба ===
