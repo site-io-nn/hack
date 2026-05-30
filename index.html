@@ -1404,6 +1404,19 @@ function nextGame() {
   showAdvice();
 }
 
+function endGame(win) {
+  state.gameActive = false;
+  clearTimers();
+  if(tutorialTimer) { clearInterval(tutorialTimer); tutorialTimer = null; }
+  if(adviceTimer) { clearInterval(adviceTimer); adviceTimer = null; }
+  $('gameScreen').classList.remove('active');
+  $('tutorialScreen').classList.remove('active');
+  $('adviceScreen').classList.remove('active');
+  $('endScreen').classList.add('active');
+  $('endScreen').scrollTop = 0;
+  $('endTitle').textContent = win ? 'VICTORY' : 'GAME OVER';
+  $('endTitle').setAttribute('data-text', win ? 'VICTORY' : 'GAME OVER');
+  $('endStatus').textContent = win ? 'SYSTEM SECURED' : 'SYSTEM BREACHED';
   $('endText').textContent = win ? 'Ты прошёл все 10 уровней!' : 'Атаки прорвали защиту...';
   $('endScore').textContent = String(state.score).padStart(4,'0');
   
@@ -1875,7 +1888,15 @@ function initAntivirus() {
     }
   }, 1000);
   
-        cell.classList.add('selected');
+  cells.forEach((emoji) => {
+    const cell = document.createElement('div');
+    cell.className = 'av-cell';
+    cell.textContent = emoji;
+    cell.dataset.emoji = emoji;
+    cell.addEventListener('click', ()=> {
+      if(!state.gameActive || !canClick) return;
+      if(cell.classList.contains('matched') || cell.classList.contains('selected')) return;
+      cell.classList.add('selected');
       if(!selected) { selected = cell; return; }
       canClick = false;
       if(selected.dataset.emoji === cell.dataset.emoji) {
@@ -1948,7 +1969,7 @@ function initEncryption() {
   
   const correctLetters = word.split('');
   const letterSet = new Set(correctLetters);
-  while(letterSet.size < Math.min(12, alphabet.length)) {
+  while(letterSet.size < Math.min(14, alphabet.length)) {
     letterSet.add(alphabet[Math.floor(Math.random()*alphabet.length)]);
   }
   const letters = Array.from(letterSet).sort(()=> Math.random()-0.5);
@@ -2027,18 +2048,20 @@ function initPermissions() {
     const data = shuffled[round];
     wrap.innerHTML = 
       '<div class="perm-counter">[' + (round+1) + '/' + totalRounds + ']</div>' +
-      '<div class="perm-app">' + data.app + '</div>' +
-      '<div class="perm-request">запрашивает доступ:</div>' +
-      '<div class="perm-perm">' + data.perm + '</div>' +
-      '<div class="perm-question">Разрешить доступ?</div>';
+      '<div style="text-align:center;font-size:34px;margin:14px 0;filter:drop-shadow(0 0 10px #00ffcc)">' + data.app + '</div>' +
+      '<div style="text-align:center;font-size:11px;color:#00ffcc88;letter-spacing:1px;margin-bottom:6px">ЗАПРАШИВАЕТ ДОСТУП К:</div>' +
+      '<div style="text-align:center;font-size:24px;color:#ffcc00;text-shadow:0 0 10px #ffcc00;margin-bottom:18px;font-family:Orbitron,sans-serif;letter-spacing:1px">' + data.perm + '</div>' +
+      '<div style="text-align:center;font-size:13px;color:#aaffee;margin-bottom:14px">Разрешить доступ?</div>';
     
     const btns = document.createElement('div');
-    btns.className = 'perm-btns';
+    btns.style.cssText = 'display:flex;gap:10px;justify-content:center;padding:0 10px';
     const allowBtn = document.createElement('button');
     allowBtn.className = 'perm-btn allow';
+    allowBtn.style.cssText = 'flex:1;padding:12px;font-size:12px';
     allowBtn.textContent = '✅ РАЗРЕШИТЬ';
     const denyBtn = document.createElement('button');
     denyBtn.className = 'perm-btn deny';
+    denyBtn.style.cssText = 'flex:1;padding:12px;font-size:12px';
     denyBtn.textContent = '❌ ЗАПРЕТИТЬ';
     btns.appendChild(allowBtn);
     btns.appendChild(denyBtn);
@@ -2120,10 +2143,10 @@ function initSocial() {
       return;
     }
     const data = shuffled[round];
-    wrap.innerHTML = '<div class="perm-counter">[' + (round+1) + '/' + totalRounds + ']</div>';
+    wrap.innerHTML = '<div class="social-progress">[ ' + (round+1) + ' / ' + totalRounds + ' ]</div>';
     
     const msg = document.createElement('div');
-    msg.className = 'social-msg';
+    msg.className = 'social-dialog';
     msg.textContent = data.msg;
     wrap.appendChild(msg);
     
@@ -2366,7 +2389,6 @@ $('restartBtn').addEventListener('click', startGame);
 $('skipTutBtn').addEventListener('click', beginLevel);
 $('skipAdviceBtn').addEventListener('click', skipAdvice);
 $('copyBtn').addEventListener('click', copyPrizeLink);
-
 </script>
 </body>
 </html>
