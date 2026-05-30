@@ -1028,7 +1028,6 @@ p { font-size: 14px; line-height: 1.5; text-align: center; margin-bottom: 8px; c
       🔧 Патчи · 💧 Утечка данных
     </div>
     <p style="font-size:11px;color:#00ffcc88;">5 жизней на все 10 уровней</p>
-    <p style="font-size:11px;color:#ffcc00;text-shadow:0 0 8px #ffcc00;margin-bottom:10px;">🛡 СОВЕТЫ + 🎁 ПРИЗ ЗА ПОБЕДУ!</p>
     <button class="btn" id="startBtn">ВОЙТИ В СИСТЕМУ</button>
   </div>
 </div>
@@ -1076,18 +1075,6 @@ p { font-size: 14px; line-height: 1.5; text-align: center; margin-bottom: 8px; c
     <p id="endText" style="margin-top:10px;">Ты прошёл все испытания!</p>
     <div style="font-family:'Orbitron',sans-serif;font-size:34px;color:#00ffcc;margin:8px 0;text-shadow:0 0 20px #00ffcc;" id="endScore">0</div>
     <div class="terminal-text">// FINAL SCORE</div>
-
-    <div id="prizeBox">
-      <div class="prize-title">🎁 ТВОЙ ПРИЗ</div>
-      <div class="prize-subtitle">// REWARD UNLOCKED</div>
-      <div class="qr-wrapper">
-        <img id="qrImage" src="" alt="QR код">
-      </div>
-      <div class="prize-hint">Отсканируй QR-код или перейди по ссылке:</div>
-      <a id="prizeLink" class="prize-link" href="#" target="_blank" rel="noopener">—</a>
-      <button class="btn" id="copyBtn">КОПИРОВАТЬ ССЫЛКУ</button>
-    </div>
-
     <button class="btn" id="restartBtn" style="margin-top:14px;margin-bottom:20px;">ПЕРЕЗАПУСК</button>
   </div>
 </div>
@@ -1096,12 +1083,6 @@ p { font-size: 14px; line-height: 1.5; text-align: center; margin-bottom: 8px; c
 </div>
 
 <script>
-// ============================================
-// 🎁 НАСТРОЙКА ПРИЗА
-// ============================================
-const PRIZE_URL = 'https://t.me/addstickers/mojimeow';
-// ============================================
-
 const $ = id => document.getElementById(id);
 const MAX_LIVES = 5;
 const TUTORIAL_TIME = 10;
@@ -1419,20 +1400,6 @@ function endGame(win) {
   $('endStatus').textContent = win ? 'SYSTEM SECURED' : 'SYSTEM BREACHED';
   $('endText').textContent = win ? 'Ты прошёл все 10 уровней!' : 'Атаки прорвали защиту...';
   $('endScore').textContent = String(state.score).padStart(4,'0');
-  
-  const prizeBox = $('prizeBox');
-  if(win) {
-    const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(PRIZE_URL) + '&bgcolor=ffffff&color=001a1a&margin=10';
-    $('qrImage').src = qrUrl;
-    $('prizeLink').href = PRIZE_URL;
-    $('prizeLink').textContent = PRIZE_URL;
-    prizeBox.style.display = 'block';
-    const cb = $('copyBtn');
-    cb.textContent = 'КОПИРОВАТЬ ССЫЛКУ';
-    cb.classList.remove('copied');
-  } else {
-    prizeBox.style.display = 'none';
-  }
 }
 
 function loseLife() {
@@ -1444,30 +1411,6 @@ function loseLife() {
     return true;
   }
   return false;
-}
-
-function copyPrizeLink() {
-  const cb = $('copyBtn');
-  const onSuccess = () => {
-    cb.textContent = '✓ СКОПИРОВАНО';
-    cb.classList.add('copied');
-    setTimeout(() => {
-      cb.textContent = 'КОПИРОВАТЬ ССЫЛКУ';
-      cb.classList.remove('copied');
-    }, 2000);
-  };
-  if(navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(PRIZE_URL).then(onSuccess).catch(() => { fallbackCopy(); });
-  } else { fallbackCopy(); }
-  function fallbackCopy() {
-    const ta = document.createElement('textarea');
-    ta.value = PRIZE_URL;
-    ta.style.position = 'fixed'; ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand('copy'); onSuccess(); } catch(e) {}
-    document.body.removeChild(ta);
-  }
 }
 
 /* ============ ИГРА 1: PHISHING ============ */
