@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CyberGuard — Игра о безопасности</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+html, body { height: 100%; overflow: hidden; font-family: 'Segoe UI', Tahoma, sans-serif; background: #0a0e27; color: #e0e6ff; touch-action: none; }
+#game { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+.screen { position: absolute; inset: 0; display: none; flex-direction: column; padding: 15px; background: linear-gradient(135deg, #0a0e27 0%, #1a1f4e 100%); }
+.screen.active { display: flex; }
+
+h1 { font-size: 28px; text-align: center; margin-bottom: 10px; color: #4fc3f7; text-shadow: 0 0 10px #4fc3f7; }
+h2 { font-size: 22px; text-align: center; margin-bottom: 15px; color: #4fc3f7; }
+p { font-size: 15px; line-height: 1.5; text-align: center; margin-bottom: 10px; }
+
+.btn { background: linear-gradient(135deg, #4fc3f7, #2196f3); color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 10px; cursor: pointer; margin: 10px auto; display: block; box-shadow: 0 4px 15px rgba(33,150,243,0.4); font-weight: bold; min-width: 200px; }
+.btn:active { transform: scale(0.96); }
+.btn.red { background: linear-gradient(135deg, #f44336, #d32f2f); }
+
+.hud { display: flex; justify-content: space-between; padding: 10px 15px; background: rgba(0,0,0,0.3); border-radius: 10px; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
+.hud div { color: #4fc3f7; }
+
+.center-content { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+
+#gameArea { flex: 1; position: relative; background: rgba(0,0,0,0.3); border-radius: 15px; overflow: hidden; border: 2px solid #4fc3f7; }
+
+/* Phishing */
+.email { position: absolute; width: 90%; left: 5%; background: #1e2a5e; padding: 12px; border-radius: 8px; border-left: 4px solid #4fc3f7; cursor: pointer; transition: transform 0.1s; }
+.email.phish { border-left-color: #f44336; }
+.email:active { transform: scale(0.97); }
+.email .from { font-size: 13px; color: #aab; margin-bottom: 4px; }
+.email .subj { font-size: 15px; font-weight: bold; }
+.email .preview { font-size: 12px; color: #99a; margin-top: 4px; }
+.swipe-hint { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 12px; color: #88a; }
+
+/* Firewall */
+.packet { position: absolute; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 28px; border-radius: 50%; box-shadow: 0 0 15px currentColor; }
+.packet.virus { background: #5a1a1a; color: #ff5252; }
+.packet.safe { background: #1a3a5a; color: #4fc3f7; }
+#firewallBar { position: absolute; bottom: 80px; left: 0; right: 0; height: 6px; background: #4fc3f7; box-shadow: 0 0 10px #4fc3f7; }
+#shield { position: absolute; bottom: 30px; width: 70px; height: 70px; background: linear-gradient(135deg, #4fc3f7, #2196f3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 0 20px #4fc3f7; transform: translateX(-50%); transition: left 0.05s; }
+
+/* Password */
+.char { position: absolute; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; border-radius: 8px; color: white; }
+.char.good { background: #2e7d32; }
+.char.bad { background: #c62828; }
+#basket { position: absolute; bottom: 20px; width: 90px; height: 30px; background: linear-gradient(135deg, #4fc3f7, #2196f3); border-radius: 8px; transform: translateX(-50%); box-shadow: 0 0 15px #4fc3f7; }
+#passDisplay { position: absolute; top: 10px; left: 10px; right: 10px; background: rgba(0,0,0,0.5); padding: 8px; border-radius: 6px; font-family: monospace; font-size: 14px; min-height: 30px; word-break: break-all; }
+
+/* Captcha */
+.captcha-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 15px; }
+.captcha-cell { aspect-ratio: 1; background: #1e2a5e; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 36px; cursor: pointer; border: 2px solid transparent; }
+.captcha-cell.selected { border-color: #4fc3f7; background: #2a3a7e; }
+.captcha-task { text-align: center; padding: 15px; font-size: 16px; font-weight: bold; color: #4fc3f7; }
+
+/* Antivirus matching */
+.av-grid { position: absolute; inset: 10px; display: grid; gap: 6px; }
+.av-cell { background: #1e2a5e; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 28px; transition: all 0.2s; }
+.av-cell.selected { background: #4fc3f7; transform: scale(0.95); box-shadow: 0 0 15px #4fc3f7; }
+.av-cell.matched { opacity: 0.2; }
+
+#message { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.9); padding: 20px 30px; border-radius: 15px; font-size: 20px; font-weight: bold; z-index: 100; display: none; border: 2px solid #4fc3f7; text-align: center; }
+
+.progress { display: flex; gap: 4px; margin-bottom: 10px; }
+.progress div { flex: 1; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; }
+.progress div.done { background: #4caf50; }
+.progress div.current { background: #4fc3f7; }
+
+.lives { color: #ff5252 !important; }
+
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.5} }
+.timer-low { animation: pulse 0.5s infinite; color: #ff5252 !important; }
+
+.tip { background: rgba(79,195,247,0.1); border-left: 3px solid #4fc3f7; padding: 10px; margin: 10px 0; border-radius: 5px; font-size: 13px; text-align: left; }
+</style>
+</head>
+<body>
+<div id="game">
+
+<div class="screen active" id="menuScreen">
+  <div class="center-content">
+    <h1>🛡️ CyberGuard</h1>
+    <p>5 мини-игр о безопасности в интернете</p>
+    <div class="tip">📧 Распознавай фишинг<br>🔥 Блокируй вирусы<br>🔑 Создавай пароли<br>✅ Решай капчи<br>🦠 Удаляй угрозы</div>
+    <button class="btn" onclick="startGame()">▶ НАЧАТЬ</button>
+  </div>
+</div>
+
+<div class="screen" id="gameScreen">
+  <div class="progress" id="progress"></div>
+  <div class="hud">
+    <div id="gameTitle">Игра 1/5</div>
+    <div id="score">Очки: 0</div>
+    <div id="lives" class="lives">❤❤❤</div>
+  </div>
+  <div id="gameArea"></div>
+</div>
+
+<div class="screen" id="endScreen">
+  <div class="center-content">
+    <h1 id="endTitle">🎉 Победа!</h1>
+    <p id="endText">Ты настоящий киберзащитник!</p>
+    <p style="font-size:24px;color:#4fc3f7;margin:20px 0;" id="endScore">Очки: 0</p>
+    <button class="btn" onclick="location.reload()">🔄 ЕЩЁ РАЗ</button>
+  </div>
+</div>
+
+<div id="message"></div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const area = $('gameArea');
+let state = { current: 0, score: 0, lives: 3, gameActive: false };
+const games = ['phishing','firewall','password','captcha','antivirus'];
+const titles = ['📧 Фишинг','🔥 Файрвол','🔑 Пароль','✅ Капча','🦠 Антивирус'];
+
+function showMsg(text, dur=1500) {
+  const m = $('message');
+  m.textContent = text;
+  m.style.display = 'block';
+  clearTimeout(m._t);
+  m._t = setTimeout(()=> m.style.display='none', dur);
+}
+
+function updateHUD() {
+  $('score').textContent = 'Очки: ' + state.score;
+  $('lives').textContent = '❤'.repeat(Math.max(0,state.lives)) + '🖤'.repeat(Math.max(0,3-state.lives));
+  $('gameTitle').textContent = titles[state.current];
+  const prog = $('progress');
+  prog.innerHTML = '';
+  for(let i=0;i<5;i++){
+    const d = document.createElement('div');
+    if(i<state.current) d.className='done';
+    else if(i===state.current) d.className='current';
+    prog.appendChild(d);
+  }
+}
+
+function startGame() {
+  $('menuScreen').classList.remove('active');
+  $('gameScreen').classList.add('active');
+  state.current = 0;
+  state.score = 0;
+  state.lives = 3;
+  loadGame();
+}
+
+function loadGame() {
+  area.innerHTML = '';
+  updateHUD();
+  if(state.lives<=0) return endGame(false);
+  if(state.current>=5) return endGame(true);
+  showMsg(titles[state.current], 1200);
+  setTimeout(()=> {
+    const g = games[state.current];
+    if(g==='phishing') initPhishing();
+    else if(g==='firewall') initFirewall();
+    else if(g==='password') initPassword();
+    else if(g==='captcha') initCaptcha();
+    else if(g==='antivirus') initAntivirus();
+  }, 1200);
+}
+
+function nextGame() {
+  state.current++;
+  loadGame();
+}
+
+function endGame(win) {
+  state.gameActive = false;
+  $('gameScreen').classList.remove('active');
+  $('endScreen').classList.add('active');
+  $('endTitle').textContent = win ? '🎉 Победа!' : '💀 Поражение';
+  $('endText').textContent = win ? 'Ты прошёл все испытания!' : 'Атаки прорвали защиту. Попробуй снова!';
+  $('endScore').textContent = 'Очки: ' + state.score;
+}
+
+function loseLife() {
+  state.lives--;
+  updateHUD();
+  if(state.lives<=0) {
+    state.gameActive = false;
+    setTimeout(()=> endGame(false), 500);
+    return true;
+  }
+  return false;
+}
+
+/* ============ ИГРА 1: PHISHING ============ */
+function initPhishing() {
+  state.gameActive = true;
+  const phishExamples = [
+    {from:'support@paypa1.com', subj:'Срочно! Аккаунт заблокирован', preview:'Перейдите по ссылке для разблокировки'},
+    {from:'admin@bank-secure.ru', subj:'ВЫИГРАЛИ 1000000 рублей!', preview:'Введите данные карты для получения'},
+    {from:'noreply@vk-help.xyz', subj:'Ваш пароль скоро истечёт', preview:'Срочно подтвердите данные'},
+    {from:'apple-id@iclud.com', subj:'Подозрительный вход в аккаунт', preview:'Войдите немедленно'},
+    {from:'admin@goggle.com', subj:'Подтвердите личность сейчас!', preview:'Клик иначе блокировка'},
+    {from:'tax@nalogs.ru', subj:'Возврат налога 50000р', preview:'Введите реквизиты карты'},
+  ];
+  const safeExamples = [
+    {from:'noreply@github.com', subj:'Pull request обновлён', preview:'Изменения в репозитории'},
+    {from:'news@habr.com', subj:'Подборка статей за неделю', preview:'Лучшие материалы'},
+    {from:'team@notion.so', subj:'Добавлены новые функции', preview:'Узнайте о возможностях'},
+    {from:'info@steampowered.com', subj:'Скидки на летней распродаже', preview:'Загляните в библиотеку'},
+    {from:'no-reply@youtube.com', subj:'Новое видео от канала', preview:'Премьера состоится в...'},
+  ];
+  
+  let processed = 0, needed = 8, missed = 0;
+  let speed = 1.2;
+  
+  const hint = document.createElement('div');
+  hint.className = 'swipe-hint';
+  hint.textContent = '👆 Тап = удалить фишинг | ⬅ свайп = безопасно';
+  area.appendChild(hint);
+  
+  function spawnEmail() {
+    if(!state.gameActive || processed>=needed) return;
+    const isPhish = Math.random() < 0.55;
+    const data = isPhish ? phishExamples[Math.floor(Math.random()*phishExamples.length)] : safeExamples[Math.floor(Math.random()*safeExamples.length)];
+    const el = document.createElement('div');
+    el.className = 'email' + (isPhish?' phish':'');
+    el.innerHTML = `<div class="from">${data.from}</div><div class="subj">${data.subj}</div><div class="preview">${data.preview}</div>`;
+    el.style.top = '-100px';
+    area.appendChild(el);
+    
+    let y = -100;
+    let startX = 0, currentX = 0, dragging = false;
+    
+    el.addEventListener('touchstart', e => { startX = e.touches[0].clientX; dragging = true; e.stopPropagation(); }, {passive:true});
+    el.addEventListener('touchmove', e => {
+      if(!dragging) return;
+      currentX = e.touches[0].clientX - startX;
+      el.style.transform = `translateX(${currentX}px)`;
+    }, {passive:true});
+    el.addEventListener('touchend', e => {
+      dragging = false;
+      if(Math.abs(currentX) > 80) {
+        // swipe = safe (delete as legitimate)
+        handle(false);
+      } else if(Math.abs(currentX) < 10) {
+        // tap = phish
+        handle(true);
+      } else {
+        el.style.transform = '';
+        currentX = 0;
+      }
+    });
+    el.addEventListener('click', e => {
+      if(Math.abs(currentX) < 10) handle(true);
+    });
+    
+    function handle(markedAsPhish) {
+      if(el._done) return;
+      el._done = true;
+      processed++;
+      if(markedAsPhish === isPhish) {
+        state.score += 10;
+        el.style.background = '#2e7d32';
+      } else {
+        el.style.background = '#c62828';
+        if(loseLife()) { cleanup(); return; }
+      }
+      updateHUD();
+      setTimeout(()=> el.remove(), 200);
+      if(processed >= needed) {
+        state.gameActive = false;
+        setTimeout(nextGame, 600);
+      }
+    }
+    
+    const anim = setInterval(()=> {
+      if(!state.gameActive || el._done) { clearInterval(anim); return; }
+      y += speed;
+      el.style.top = y + 'px';
+      if(y > area.offsetHeight - 80) {
+        clearInterval(anim);
+        if(!el._done) {
+          el._done = true;
+          el.remove();
+          if(isPhish) {
+            // missed a phish
+            if(loseLife()) { cleanup(); return; }
+          }
+        }
+      }
+    }, 16);
+  }
+  
+  let spawnTimer = setInterval(()=> {
+    if(!state.gameActive || processed >= needed) { clearInterval(spawnTimer); return; }
+    spawnEmail();
+  }, 2500);
+  spawnEmail();
+  
+  function cleanup(){ clearInterval(spawnTimer); }
+}
+
+/* ============ ИГРА 2: FIREWALL ============ */
+function initFirewall() {
+  state.gameActive = true;
+  const shield = document.createElement('div');
+  shield.id = 'shield';
+  shield.textContent = '🛡️';
+  area.appendChild(shield);
+  
+  const bar = document.createElement('div');
+  bar.id = 'firewallBar';
+  area.appendChild(bar);
+  
+  const info = document.createElement('div');
+  info.style.cssText = 'position:absolute;top:10px;left:10px;right:10px;text-align:center;font-size:13px;color:#aab';
+  info.innerHTML = '🦠 = блокируй (касайся) | 📦 = пропускай';
+  area.appendChild(info);
+  
+  let shieldX = area.offsetWidth/2;
+  shield.style.left = shieldX + 'px';
+  
+  area.addEventListener('touchmove', e => {
+    if(!state.gameActive) return;
+    const rect = area.getBoundingClientRect();
+    shieldX = e.touches[0].clientX - rect.left;
+    shieldX = Math.max(35, Math.min(area.offsetWidth-35, shieldX));
+    shield.style.left = shieldX + 'px';
+  }, {passive:true});
+  
+  let blocked = 0, needed = 10;
+  let speed = 2.5;
+  
+  function spawnPacket() {
+    if(!state.gameActive || blocked >= needed) return;
+    const isVirus = Math.random() < 0.65;
+    const p = document.createElement('div');
+    p.className = 'packet ' + (isVirus?'virus':'safe');
+    p.textContent = isVirus ? '🦠' : '📦';
+    const x = Math.random() * (area.offsetWidth - 50);
+    p.style.left = x + 'px';
+    p.style.top = '0px';
+    area.appendChild(p);
+    
+    let y = 0;
+    const anim = setInterval(()=> {
+      if(!state.gameActive) { clearInterval(anim); return; }
+      y += speed;
+      p.style.top = y + 'px';
+      
+      const sBottom = area.offsetHeight - 30;
+      const sTop = sBottom - 70;
+      const px = x + 25;
+      
+      // collision with shield
+      if(y+50 >= sTop && y <= sBottom && Math.abs(px - shieldX) < 45) {
+        clearInterval(anim);
+        if(isVirus) {
+          state.score += 10;
+          blocked++;
+        } else {
+          if(loseLife()) { p.remove(); return; }
+        }
+        updateHUD();
+        p.remove();
+        if(blocked >= needed) { state.gameActive=false; setTimeout(nextGame, 500); }
+        return;
+      }
+      
+      if(y > area.offsetHeight) {
+        clearInterval(anim);
+        p.remove();
+        if(isVirus) {
+          if(loseLife()) return;
+        } else {
+          state.score += 5;
+        }
+        updateHUD();
+      }
+    }, 16);
+  }
+  
+  const spawnTimer = setInterval(()=> {
+    if(!state.gameActive) { clearInterval(spawnTimer); return; }
+    spawnPacket();
+    speed = Math.min(5, speed + 0.05);
+  }, 900);
+}
+
+/* ============ ИГРА 3: PASSWORD ============ */
+function initPassword() {
+  state.gameActive = true;
+  let password = '';
+  
+  const display = document.createElement('div');
+  display.id = 'passDisplay';
+  display.textContent = 'Пароль: ';
+  area.appendChild(display);
+  
+  const info = document.createElement('div');
+  info.style.cssText = 'position:absolute;top:50px;left:10px;right:10px;text-align:center;font-size:12px;color:#aab';
+  info.textContent = 'Лови: A-Z, 0-9, !@#$. Избегай: пробел, абв';
+  area.appendChild(info);
+  
+  const basket = document.createElement('div');
+  basket.id = 'basket';
+  area.appendChild(basket);
+  
+  let basketX = area.offsetWidth/2;
+  basket.style.left = basketX + 'px';
+  
+  area.addEventListener('touchmove', e => {
+    if(!state.gameActive) return;
+    const rect = area.getBoundingClientRect();
+    basketX = e.touches[0].clientX - rect.left;
+    basketX = Math.max(45, Math.min(area.offsetWidth-45, basketX));
+    basket.style.left = basketX + 'px';
+  }, {passive:true});
+  
+  const goodChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789!@#$%&*';
+  const badChars = 'абвгдежзий ';
+  let needed = 12;
+  
+  function spawnChar() {
+    if(!state.gameActive || password.length >= needed) return;
+    const isGood = Math.random() < 0.6;
+    const ch = isGood ? goodChars[Math.floor(Math.random()*goodChars.length)] : badChars[Math.floor(Math.random()*badChars.length)];
+    const el = document.createElement('div');
+    el.className = 'char ' + (isGood?'good':'bad');
+    el.textContent = ch === ' ' ? '␣' : ch;
+    const x = Math.random() * (area.offsetWidth - 45);
+    el.style.left = x + 'px';
+    el.style.top = '0px';
+    area.appendChild(el);
+    
+    let y = 0;
+    const speed = 2 + Math.random()*1.5;
+    const anim = setInterval(()=> {
+      if(!state.gameActive) { clearInterval(anim); return; }
+      y += speed;
+      el.style.top = y + 'px';
+      
+      const bBottom = area.offsetHeight - 20;
+      const bTop = bBottom - 30;
+      const cx = x + 22;
+      
+            if(y+45 >= bTop && y <= bBottom && Math.abs(cx - basketX) < 55) {
+        clearInterval(anim);
+        if(isGood) {
+          password += ch;
+          state.score += 10;
+          display.textContent = 'Пароль: ' + password;
+          if(password.length >= needed) {
+            state.gameActive = false;
+            state.score += 50;
+            updateHUD();
+            showMsg('🔐 Надёжный пароль!', 1200);
+            setTimeout(nextGame, 1200);
+          }
+        } else {
+          if(loseLife()) { el.remove(); return; }
+        }
+        updateHUD();
+        el.remove();
+        return;
+      }
+      
+      if(y > area.offsetHeight) {
+        clearInterval(anim);
+        el.remove();
+      }
+    }, 16);
+  }
+  
+  const spawnTimer = setInterval(()=> {
+    if(!state.gameActive) { clearInterval(spawnTimer); return; }
+    spawnChar();
+  }, 700);
+}
+
+/* ============ ИГРА 4: CAPTCHA ============ */
+function initCaptcha() {
+  state.gameActive = true;
+  
+  const tasks = [
+    {q:'Выбери все 🚗 машины', target:'🚗', options:['🚗','🚲','🚗','🛵','🚗','🚂','🚗','✈️','🚗']},
+    {q:'Выбери все 🚦 светофоры', target:'🚦', options:['🚦','🏠','🚦','🌳','🚲','🚦','🚦','🛑','🚂 поезда', target:'🚂', options:['🚂','🚗','🚂','🚲','🚂','✈️','🚂','🛵','🚦']},
+  ];
+  
+  let round = 0;
+  const totalRounds = 4;
+  
+  function nextRound() {
+    if(!state.gameActive) return;
+    if(round >= totalRounds) {
+      state.gameActive = false;
+      setTimeout(nextGame, 600);
+      return;
+    }
+    
+    area.innerHTML = '';
+    const task = tasks[Math.floor(Math.random()*tasks.length)];
+    
+    const taskEl = document.createElement('div');
+    taskEl.className = 'captcha-task';
+    taskEl.textContent = task.q;
+    area.appendChild(taskEl);
+    
+    const grid = document.createElement('div');
+    grid.className = 'captcha-grid';
+    
+    // shuffle options
+    const opts = [...task.options].sort(()=> Math.random()-0.5);
+    const selected = new Set();
+    
+    opts.forEach((emoji, i) => {
+      const cell = document.createElement('div');
+      cell.className = 'captcha-cell';
+      cell.textContent = emoji;
+      cell.addEventListener('click', ()=> {
+        if(!state.gameActive) return;
+        if(selected.has(i)) {
+          selected.delete(i);
+          cell.classList.remove('selected');
+        } else {
+          selected.add(i);
+          cell.classList.add('selected');
+        }
+      });
+      grid.appendChild(cell);
+    });
+    area.appendChild(grid);
+    
+    // timer
+    const timerEl = document.createElement('div');
+    timerEl.style.cssText = 'text-align:center;font-size:18px;font-weight:bold;color:#4fc3f7;padding:5px';
+    let timeLeft = 8;
+    timerEl.textContent = '⏱ ' + timeLeft + 'с';
+    area.appendChild(timerEl);
+    
+    const submitBtn = document.createElement('button');
+    submitBtn.className = 'btn';
+    submitBtn.style.margin = '10px auto';
+    submitBtn.textContent = '✓ Проверить';
+    area.appendChild(submitBtn);
+    
+    const timer = setInterval(()=> {
+      if(!state.gameActive) { clearInterval(timer); return; }
+      timeLeft--;
+      timerEl.textContent = '⏱ ' + timeLeft + 'с';
+      if(timeLeft <= 3) timerEl.classList.add('timer-low');
+      if(timeLeft <= 0) {
+        clearInterval(timer);
+        checkAnswer(true);
+      }
+    }, 1000);
+    
+    function checkAnswer(timeout) {
+      clearInterval(timer);
+      let correct = true;
+      opts.forEach((emoji, i) => {
+        const shouldSelect = emoji === task.target;
+        const isSelected = selected.has(i);
+        if(shouldSelect !== isSelected) correct = false;
+      });
+      
+      if(correct && !timeout) {
+        state.score += 25;
+        showMsg('✅ Верно!', 800);
+        round++;
+        updateHUD();
+        setTimeout(nextRound, 900);
+      } else {
+        showMsg(timeout ? '⏱ Время вышло!' : '❌ Ошибка!', 800);
+        if(loseLife()) return;
+        round++;
+        setTimeout(nextRound, 900);
+      }
+    }
+    
+    submitBtn.addEventListener('click', ()=> checkAnswer(false));
+  }
+  
+  nextRound();
+}
+
+/* ============ ИГРА 5: ANTIVIRUS (matching) ============ */
+function initAntivirus() {
+  state.gameActive = true;
+  
+  const info = document.createElement('div');
+  info.style.cssText = 'position:absolute;top:5px;left:10px;right:10px;text-align:center;font-size:12px;color:#aab;z-index:10';
+  info.textContent = 'Соединяй пары одинаковых угроз 🦠';
+  area.appendChild(info);
+  
+  const threats = ['🦠','🐛','👾','💀','🔓','⚠️'];
+  const rows = 5, cols = 4;
+  const total = rows * cols;
+  
+  // Generate pairs
+  const cells = [];
+  for(let i=0; i<total/2; i++) {
+    const t = threats[i % threats.length];
+    cells.push(t, t);
+  }
+  cells.sort(()=> Math.random()-0.5);
+  
+  const grid = document.createElement('div');
+  grid.className = 'av-grid';
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+  grid.style.top = '30px';
+  area.appendChild(grid);
+  
+  let selected = null;
+  let matched = 0;
+  let canClick = true;
+  let timeLeft = 30;
+  
+  const timerEl = document.createElement('div');
+  timerEl.style.cssText = 'position:absolute;bottom:5px;left:0;right:0;text-align:center;font-size:16px;font-weight:bold;color:#4fc3f7;z-index:10';
+  timerEl.textContent = '⏱ ' + timeLeft + 'с';
+  area.appendChild(timerEl);
+  
+  const timer = setInterval(()=> {
+    if(!state.gameActive) { clearInterval(timer); return; }
+    timeLeft--;
+    timerEl.textContent = '⏱ ' + timeLeft + 'с';
+    if(timeLeft <= 5) timerEl.classList.add('timer-low');
+    if(timeLeft <= 0) {
+      clearInterval(timer);
+      state.gameActive = false;
+      if(matched < total/2) {
+        loseLife();
+        showMsg('⏱ Время вышло!', 1000);
+      }
+      setTimeout(nextGame, 1200);
+    }
+  }, 1000);
+  
+  cells.forEach((emoji, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'av-cell';
+    cell.textContent = emoji;
+    cell.dataset.emoji = emoji;
+    cell.dataset.idx = i;
+    
+    cell.addEventListener('click', ()=> {
+      if(!state.gameActive || !canClick) return;
+      if(cell.classList.contains('matched') || cell.classList.contains('selected')) return;
+      
+      cell.classList.add('selected');
+      
+      if(!selected) {
+        selected = cell;
+      } else {
+        canClick = false;
+        if(selected.dataset.emoji === cell.dataset.emoji) {
+          // match!
+          setTimeout(()=> {
+            selected.classList.add('matched');
+            cell.classList.add('matched');
+            selected.classList.remove('selected');
+            cell.classList.remove('selected');
+            selected = null;
+            matched++;
+            state.score += 15;
+            updateHUD();
+            canClick = true;
+            
+            if(matched >= total/2) {
+              clearInterval(timer);
+              state.gameActive = false;
+              state.score += 50;
+              updateHUD();
+              showMsg('🛡️ Угрозы устранены!', 1200);
+              setTimeout(nextGame, 1300);
+            }
+          }, 300);
+        } else {
+          // no match
+          setTimeout(()=> {
+            selected.classList.remove('selected');
+            cell.classList.remove('selected');
+            selected = null;
+            canClick = true;
+          }, 600);
+        }
+      }
+    });
+    
+    grid.appendChild(cell);
+  });
+}
+
+// Prevent scroll/zoom
+document.addEventListener('touchmove', e => e.preventDefault(), {passive:false});
+document.addEventListener('gesturestart', e => e.preventDefault());
+</script>
+</body>
+</html>
