@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>CYBERGUARD // v2.0</title>
+<title>Информационная Безопасность</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
 
@@ -35,6 +35,13 @@ html, body { height: 100%; overflow: hidden; font-family: 'Share Tech Mono', mon
   z-index: 10;
 }
 .screen.active { display: flex; }
+
+/* === ENDSCREEN SCROLL === */
+#endScreen.active { overflow-y: auto; }
+#endScreen .center-content { 
+  justify-content: flex-start; padding-top: 20px; padding-bottom: 30px;
+  min-height: 100%;
+}
 
 h1 { 
   font-family: 'Orbitron', sans-serif; font-size: 32px; text-align: center; margin-bottom: 10px;
@@ -92,6 +99,7 @@ p {
 }
 .hud div { color: #00ffcc; text-shadow: 0 0 5px #00ffcc; letter-spacing: 1px; }
 .hud .label { color: #00ffcc99; font-size: 10px; }
+.hud #lives { font-size: 11px; letter-spacing: 0; }
 
 .center-content { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
 
@@ -369,7 +377,11 @@ p {
 .tutorial-bar-fill {
   height: 100%; background: #00ffcc;
   box-shadow: 0 0 10px #00ffcc;
-  width: 0%; transition: width 1s linear;
+  width: 0%;
+}
+
+#skipTutBtn {
+  margin-top: 20px; min-width: 180px; padding: 10px 20px; font-size: 13px;
 }
 
 .title-glitch {
@@ -421,6 +433,86 @@ p {
 }
 
 .terminal-text::before { content: '> '; }
+
+/* === PRIZE / QR CODE === */
+#prizeBox {
+  display: none;
+  margin: 20px auto 10px;
+  padding: 20px;
+  background: rgba(0,255,204,0.08);
+  border: 2px solid #00ffcc;
+  box-shadow: 0 0 25px rgba(0,255,204,0.4), inset 0 0 15px rgba(0,255,204,0.1);
+  max-width: 320px;
+  width: 90%;
+  text-align: center;
+  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+  animation: prizeGlow 2s ease-in-out infinite;
+}
+@keyframes prizeGlow {
+  0%, 100% { box-shadow: 0 0 25px rgba(0,255,204,0.4), inset 0 0 15px rgba(0,255,204,0.1); }
+  50% { box-shadow: 0 0 40px rgba(0,255,204,0.7), inset 0 0 25px rgba(0,255,204,0.2); }
+}
+
+.prize-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 16px; font-weight: 900;
+  color: #00ffcc; text-shadow: 0 0 10px #00ffcc;
+  letter-spacing: 3px; margin-bottom: 5px;
+}
+
+.prize-subtitle {
+  font-size: 11px; color: #00ffcc99;
+  letter-spacing: 2px; margin-bottom: 15px;
+}
+
+.qr-wrapper {
+  display: inline-block;
+  padding: 12px;
+  background: #fff;
+  border: 2px solid #00ffcc;
+  box-shadow: 0 0 20px rgba(0,255,204,0.5);
+  margin-bottom: 15px;
+}
+.qr-wrapper img {
+  display: block;
+  width: 200px; height: 200px;
+}
+
+.prize-link {
+  display: block;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  color: #00ffcc;
+  text-decoration: none;
+  word-break: break-all;
+  padding: 10px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid #00ffcc66;
+  margin-bottom: 10px;
+  text-shadow: 0 0 5px #00ffcc;
+  letter-spacing: 1px;
+}
+.prize-link:active { background: rgba(0,255,204,0.2); }
+
+.prize-hint {
+  font-size: 11px;
+  color: #00ffcc88;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+#copyBtn {
+  min-width: 180px;
+  padding: 10px 20px;
+  font-size: 12px;
+  margin: 5px auto;
+}
+
+#copyBtn.copied {
+  background: #00ffcc;
+  color: #000;
+  text-shadow: none;
+}
 </style>
 </head>
 <body>
@@ -428,8 +520,8 @@ p {
 
 <div class="screen active" id="menuScreen">
   <div class="center-content">
-    <h1 class="title-glitch" data-text="CYBERGUARD">CYBERGUARD</h1>
-    <div class="terminal-text">SYSTEM v2.0 // INITIALIZING...</div>
+    <h1 class="title-glitch" data-text="CYBERGUARD">Информационная Безопасность</h1>
+    <div class="terminal-text">SYSTEM v2.2 // INITIALIZING...</div>
     <p style="margin-top:25px;">10 уровней кибербезопасности</p>
     <div class="tip">
       <strong>&gt; БРИФИНГ:</strong><br>
@@ -439,7 +531,8 @@ p {
       ✅ Решай защитные капчи<br>
       🦠 Удаляй угрозы с системы
     </div>
-    <p style="font-size:12px;color:#00ffcc88;">3 жизни на все 10 уровней</p>
+    <p style="font-size:12px;color:#00ffcc88;">5 жизней на все 10 уровней</p>
+    <p style="font-size:12px;color:#ffcc00;text-shadow:0 0 8px #ffcc00;">🎁 ПРИЗ ЗА ПОБЕДУ!</p>
     <button class="btn" id="startBtn">ВОЙТИ В СИСТЕМУ</button>
   </div>
 </div>
@@ -451,8 +544,9 @@ p {
     <div class="tutorial-title" id="tutTitle">ФИШИНГ</div>
     <div class="tutorial-subtitle">// ПОДГОТОВКА</div>
     <div class="tutorial-desc" id="tutDesc"></div>
-    <div class="tutorial-countdown" id="tutCount">5</div>
+    <div class="tutorial-countdown" id="tutCount">10</div>
     <div class="tutorial-bar"><div class="tutorial-bar-fill" id="tutBar"></div></div>
+    <button class="btn" id="skipTutBtn">ПРОПУСТИТЬ</button>
   </div>
 </div>
 
@@ -461,7 +555,7 @@ p {
   <div class="hud">
     <div><span class="label">LVL</span> <span id="gameTitle">01/10</span></div>
     <div><span class="label">SCORE</span> <span id="score">0</span></div>
-    <div><span class="label">HP</span> <span id="lives" class="lives">❤❤❤</span></div>
+    <div><span class="label">HP</span> <span id="lives" class="lives">❤❤❤❤❤</span></div>
   </div>
   <div id="gameArea"></div>
 </div>
@@ -471,9 +565,21 @@ p {
     <h1 id="endTitle" class="title-glitch" data-text="VICTORY">VICTORY</h1>
     <div class="terminal-text" id="endStatus">SYSTEM SECURED</div>
     <p id="endText" style="margin-top:20px;">Ты прошёл все испытания!</p>
-    <div style="font-family:'Orbitron',sans-serif;font-size:42px;color:#00ffcc;margin:25px 0;text-shadow:0 0 20px #00ffcc;" id="endScore">0</div>
+    <div style="font-family:'Orbitron',sans-serif;font-size:42px;color:#00ffcc;margin:15px 0;text-shadow:0 0 20px #00ffcc;" id="endScore">0</div>
     <div class="terminal-text">// FINAL SCORE</div>
-    <button class="btn" id="restartBtn" style="margin-top:30px;">ПЕРЕЗАПУСК</button>
+
+    <div id="prizeBox">
+      <div class="prize-title">🎁 ТВОЙ ПРИЗ</div>
+      <div class="prize-subtitle">// REWARD UNLOCKED</div>
+      <div class="qr-wrapper">
+        <img id="qrImage" src="" alt="QR код">
+      </div>
+      <div class="prize-hint">Отсканируй QR-код или перейди по ссылке:</div>
+      <a id="prizeLink" class="prize-link" href="#" target="_blank" rel="noopener">—</a>
+      <button class="btn" id="copyBtn">КОПИРОВАТЬ ССЫЛКУ</button>
+    </div>
+
+    <button class="btn" id="restartBtn" style="margin-top:20px;">ПЕРЕЗАПУСК</button>
   </div>
 </div>
 
@@ -481,9 +587,17 @@ p {
 </div>
 
 <script>
+// ============================================
+// 🎁 НАСТРОЙКА ПРИЗА — ЗАМЕНИ ССЫЛКУ НА СВОЮ!
+// ============================================
+const PRIZE_URL = 'https://t.me/addstickers/mojimeow';
+// ============================================
+
 const $ = id => document.getElementById(id);
+const MAX_LIVES = 5;
+const TUTORIAL_TIME = 10;
 let area;
-const state = { current: 0, score: 0, lives: 3, gameActive: false };
+const state = { current: 0, score: 0, lives: MAX_LIVES, gameActive: false };
 let activeTimers = [];
 
 // 10 уровней: каждая механика 2 раза с усложнением
@@ -550,7 +664,7 @@ function showMsg(text, dur) {
 
 function updateHUD() {
   $('score').textContent = String(state.score).padStart(4, '0');
-  $('lives').textContent = '❤'.repeat(Math.max(0,state.lives)) + '🖤'.repeat(Math.max(0,3-state.lives));
+  $('lives').textContent = '❤'.repeat(Math.max(0,state.lives)) + '🖤'.repeat(Math.max(0,MAX_LIVES-state.lives));
   $('gameTitle').textContent = String(state.current+1).padStart(2,'0') + '/10';
   const prog = $('progress');
   prog.innerHTML = '';
@@ -567,10 +681,11 @@ function startGame() {
   $('endScreen').classList.remove('active');
   state.current = 0;
   state.score = 0;
-  state.lives = 3;
+  state.lives = MAX_LIVES;
   showTutorial();
 }
 
+let tutorialTimer = null;
 function showTutorial() {
   if(state.current >= 10) return endGame(true);
   if(state.lives <= 0) return endGame(false);
@@ -586,24 +701,37 @@ function showTutorial() {
   $('tutTitle').textContent = info.title;
   $('tutDesc').innerHTML = lvl.difficulty === 1 ? info.desc1 : info.desc2;
   
-  let count = 5;
+  let count = TUTORIAL_TIME;
   $('tutCount').textContent = count;
-  $('tutBar').style.width = '0%';
-  setT(()=> $('tutBar').style.width = '100%', 50);
+  const bar = $('tutBar');
+  bar.style.transition = 'none';
+  bar.style.width = '0%';
   
-  const tutTimer = setI(()=> {
+  setTimeout(() => {
+    bar.style.transition = 'width ' + TUTORIAL_TIME + 's linear';
+    bar.style.width = '100%';
+  }, 50);
+  
+  if(tutorialTimer) clearInterval(tutorialTimer);
+  tutorialTimer = setInterval(() => {
     count--;
     $('tutCount').textContent = count;
     if(count <= 0) {
-      clearInterval(tutTimer);
-      $('tutorialScreen').classList.remove('active');
-      $('gameScreen').classList.add('active');
-      area = $('gameArea');
-      area.innerHTML = '';
-      updateHUD();
-      startLevel();
+      clearInterval(tutorialTimer);
+      tutorialTimer = null;
+      beginLevel();
     }
   }, 1000);
+}
+
+function beginLevel() {
+  if(tutorialTimer) { clearInterval(tutorialTimer); tutorialTimer = null; }
+  $('tutorialScreen').classList.remove('active');
+  $('gameScreen').classList.add('active');
+  area = $('gameArea');
+  area.innerHTML = '';
+  updateHUD();
+  startLevel();
 }
 
 function startLevel() {
@@ -627,6 +755,7 @@ function nextGame() {
 function endGame(win) {
   state.gameActive = false;
   clearTimers();
+  if(tutorialTimer) { clearInterval(tutorialTimer); tutorialTimer = null; }
   $('gameScreen').classList.remove('active');
   $('tutorialScreen').classList.remove('active');
   $('endScreen').classList.add('active');
@@ -635,6 +764,22 @@ function endGame(win) {
   $('endStatus').textContent = win ? 'SYSTEM SECURED' : 'SYSTEM BREACHED';
   $('endText').textContent = win ? 'Ты прошёл все 10 уровней!' : 'Атаки прорвали защиту...';
   $('endScore').textContent = String(state.score).padStart(4,'0');
+  
+  // 🎁 Показываем приз только при победе
+  const prizeBox = $('prizeBox');
+  if(win) {
+    const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(PRIZE_URL) + '&bgcolor=ffffff&color=001a1a&margin=10';
+    $('qrImage').src = qrUrl;
+    $('prizeLink').href = PRIZE_URL;
+    $('prizeLink').textContent = PRIZE_URL;
+    prizeBox.style.display = 'block';
+    // сброс кнопки копирования
+    const cb = $('copyBtn');
+    cb.textContent = 'КОПИРОВАТЬ ССЫЛКУ';
+    cb.classList.remove('copied');
+  } else {
+    prizeBox.style.display = 'none';
+  }
 }
 
 function loseLife() {
@@ -646,6 +791,38 @@ function loseLife() {
     return true;
   }
   return false;
+}
+
+// === Копирование ссылки приза ===
+function copyPrizeLink() {
+  const cb = $('copyBtn');
+  const onSuccess = () => {
+    cb.textContent = '✓ СКОПИРОВАНО';
+    cb.classList.add('copied');
+    setTimeout(() => {
+      cb.textContent = 'КОПИРОВАТЬ ССЫЛКУ';
+      cb.classList.remove('copied');
+    }, 2000);
+  };
+  
+  if(navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(PRIZE_URL).then(onSuccess).catch(() => {
+      fallbackCopy();
+    });
+  } else {
+    fallbackCopy();
+  }
+  
+  function fallbackCopy() {
+    const ta = document.createElement('textarea');
+    ta.value = PRIZE_URL;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); onSuccess(); } catch(e) {}
+    document.body.removeChild(ta);
+  }
 }
 
 /* ============ ИГРА 1: PHISHING ============ */
@@ -768,7 +945,7 @@ function initFirewall(diff) {
   let shieldX = area.offsetWidth/2;
   shield.style.left = shieldX + 'px';
   
-  function moveHandler(e) {
+    function moveHandler(e) {
     if(!state.gameActive) return;
     const rect = area.getBoundingClientRect();
     const touch = e.touches ? e.touches[0] : e;
@@ -962,7 +1139,6 @@ function initCaptcha(diff) {
     taskEl.textContent = '[' + (round+1) + '/' + totalRounds + '] ' + task.q;
     area.appendChild(taskEl);
     
-    // Генерируем клетки: 3-5 целевых + остальные случайные
     const targetCount = Math.floor(Math.random() * 3) + 3;
     const cells = [];
     for(let i = 0; i < targetCount; i++) cells.push(task.target);
@@ -1163,6 +1339,8 @@ function initAntivirus(diff) {
 // === Кнопки ===
 document.getElementById('startBtn').addEventListener('click', startGame);
 document.getElementById('restartBtn').addEventListener('click', startGame);
+document.getElementById('skipTutBtn').addEventListener('click', beginLevel);
+document.getElementById('copyBtn').addEventListener('click', copyPrizeLink);
 
 // === Защита от прокрутки/масштаба ===
 document.addEventListener('touchmove', e => {
